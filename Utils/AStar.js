@@ -1,4 +1,4 @@
-export function FindPath(start,end,originalMap){
+export default function FindPath(start,end,originalMap){
     const map = structuredClone(originalMap)
     const openSet = []
     const closedSet = []
@@ -52,8 +52,7 @@ export function FindPath(start,end,originalMap){
             const currentNeighbor = current.neighbors[i]
             // si el vecino NO esta en el closedSet ->
             // Tmb checkeo altura, bioma, etc
-            if(!closedSet.includes(currentNeighbor) && (currentNeighbor.biome !== "lake" && currentNeighbor.biome !== "water" && currentNeighbor.biome !== "deepWater" 
-                    && currentNeighbor.biome !== "highMountain" && currentNeighbor.biome !== "midMountain")){
+            if(!closedSet.includes(currentNeighbor) && checkAvailability(currentNeighbor)){
 
                 let tempG = current.g + 1
                 // si esta en el openSet y el nuevo G es menor-> se updatea el G
@@ -79,6 +78,22 @@ export function FindPath(start,end,originalMap){
 // usando Manhattan distance
 function heuristic(node1,node2){
     return Math.abs(node1.x-node1.x) + Math.abs(node2.y-node2.y)
+}
+
+// check for available tiles
+function checkAvailability(currentNeighbor){
+    let result = true
+    const { biome } = currentNeighbor
+    if(biome === "lake" ||
+       biome === "water" ||
+       biome === "deepWater" ||
+       biome === "highMountain" ||
+       biome === "midMountain" ){
+
+            result = false
+        }
+
+    return result
 }
 
  
