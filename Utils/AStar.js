@@ -1,9 +1,12 @@
 export default function FindPath(start,end,originalMap){
+
+    // TWEAKED FOR ROADS ONLY!
+
     const map = structuredClone(originalMap)
     const openSet = []
     const closedSet = []
     const finalPath = []
-
+    const diagonals = false
     // setup map for search
     for(let x = 0; x < map.length; x++){
         for(let y = 0; y < map[0].length; y++){
@@ -17,6 +20,12 @@ export default function FindPath(start,end,originalMap){
                 map[x][y].neighbors.push(map[x-1][y])
                 map[x][y].neighbors.push(map[x][y+1])
                 map[x][y].neighbors.push(map[x][y-1])
+                if(diagonals){
+                    map[x][y].neighbors.push(map[x+1][y+1])
+                    map[x][y].neighbors.push(map[x-1][y-1])
+                    map[x][y].neighbors.push(map[x-1][y+1])
+                    map[x][y].neighbors.push(map[x+1][y-1])
+                }
             }
         }
     }
@@ -55,29 +64,53 @@ export default function FindPath(start,end,originalMap){
             if(!closedSet.includes(currentNeighbor) && checkAvailability(currentNeighbor)){
 
                 let tempG = current.g + 1
+                let newPath = false
                 // si esta en el openSet y el nuevo G es menor-> se updatea el G
                 if(openSet.includes(currentNeighbor)){
                     if(tempG < currentNeighbor.g){
                         currentNeighbor.g = tempG
+                        newPath = true
                     }
                 // si no esta en el openSet, se agrega al openSet con su G
                 }else{
                     currentNeighbor.g = tempG
+                    newPath = true
                     openSet.push(currentNeighbor)
                 }
 
-                currentNeighbor.h = heuristic(currentNeighbor, end)
-                currentNeighbor.f = currentNeighbor.g + currentNeighbor.h
-                currentNeighbor.previous = current
+                if(newPath){
+                    const tempH = heuristic2(currentNeighbor, end)
+                    // prioriza caminos con temp media y baja alt y humedad
+                    if(currentNeighbor.temp < 0.4 || currentNeighbor.temp > 0.5 ||
+                        currentNeighbor.moist > 0.5 || currentNeighbor.alt > 0.5){
+                            // si es montaña aun menos prioridad
+                            if(currentNeighbor.biome === "midMountain"){
+                                currentNeighbor.h = tempH*5
+                            }else{
+                                currentNeighbor.h = tempH*2
+                            }
+                    }else{
+                        currentNeighbor.h = tempH
+                    }
+                    currentNeighbor.f = currentNeighbor.g + currentNeighbor.h
+                    currentNeighbor.previous = current
+                }
             }
         }
         
     }
 }
 
-// usando Manhattan distance
+// Manhattan distance
 function heuristic(node1,node2){
     return Math.abs(node1.x-node1.x) + Math.abs(node2.y-node2.y)
+}
+
+// Euclidean distance
+function heuristic2(node1,node2){
+    const a = node1.x - node2.x;
+    const b = node1.y - node2.y;
+    return Math.sqrt( a*a + b*b );
 }
 
 // check for available tiles
@@ -87,8 +120,7 @@ function checkAvailability(currentNeighbor){
     if(biome === "lake" ||
        biome === "water" ||
        biome === "deepWater" ||
-       biome === "highMountain" ||
-       biome === "midMountain" ){
+       biome === "highMountain" ){
 
             result = false
         }

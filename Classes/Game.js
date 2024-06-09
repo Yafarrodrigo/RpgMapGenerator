@@ -6,13 +6,25 @@ import CONFIGS from "../CONFIGS.js";
 
 export default class Game{
     constructor(seed){
-        this.random = mulberry32(seed || CONFIGS.seed)
+        if(!seed){
+            seed = Math.random()
+        }
+        const randomNumberenerator = mulberry32(seed*9999) 
+        this.random =randomNumberenerator
         this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random)
         this.graphics = new Graphics(this.map)
         this.controls = new Controls(this)
 
         this.cameraOffsetX = CONFIGS.camStartOffsetX
         this.cameraOffsetY = CONFIGS.camStartOffsetY
+
+        this.DEBUG = {
+            showNoise: "none", // "altitude", "moisture", "temperature"
+            showSettlementSpawns: false,
+            showRoads: true,
+        }
+
+        this.setupDebug(seed)
 
         this.clock = null
     }
@@ -21,6 +33,30 @@ export default class Game{
         this.clock = setInterval(()=>{
             this.update()
         },32)
+    }
+
+    setupDebug(seed){
+
+        document.getElementById('new-map-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random)
+        })
+
+        document.getElementById('map-seed-info').innerText = seed
+        document.getElementById('alt-seed-info').innerText = this.map.mapGen.seeds.altitude
+        document.getElementById('moist-seed-info').innerText = this.map.mapGen.seeds.moisture
+        document.getElementById('temp-seed-info').innerText = this.map.mapGen.seeds.temperature
+        document.querySelectorAll("input[name='show-noise']").forEach( option => {
+            option.addEventListener("click", (e) => {
+                this.DEBUG.showNoise = e.target.value
+            })
+        })
+        document.getElementById('debug-possible-settlements').addEventListener("click", (e) => {
+            this.DEBUG.showSettlementSpawns = e.target.checked
+        })
+        document.getElementById('debug-roads').addEventListener("click", (e) => {
+            this.DEBUG.showRoads = e.target.checked
+        })
     }
 
     update(){
@@ -60,6 +96,6 @@ export default class Game{
     
         
         viewport.updateViewport(this.cameraOffsetX,this.cameraOffsetY)
-        this.graphics.update(this.map)
+        this.graphics.update(this.map,this.DEBUG)
     }
 }

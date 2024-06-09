@@ -2,6 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
+    outline: none;
 }
 
 body{
@@ -11,4 +13,82 @@ body{
 
 canvas{
     border: 1px solid white;
+}
+
+#debug-panel{
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(15px);
+}
+
+#debug-panel hr{
+    margin: 10px auto;
+    width: 95%;
+    border: 2px solid rgba(155, 155, 155, 0.66);
+}
+
+#seed-info-container{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    width: 95%;
+}
+
+#seed-info-container h3{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-decoration: underline;
+}
+
+#seed-info-container div{
+    justify-self: end;
+    text-decoration: none !important;
+    user-select: text;
+}
+
+.option-container{
+    width: 200px;
+    height: fit-content;
+    display: flex;
+    border: 2px solid #555;
+    border-radius: 5px;
+    margin: auto;
+}
+
+#debug-panel button{
+    width: 100%;
+    margin: 10px 0;
+    height: 40px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.25rem;
+}
+
+#debug-panel button:hover{
+    background-color: #999;
+}
+
+#debug-panel input[name="show-noise"]{
+    margin: 10px;
+    transform: scale(2);
+    cursor: pointer;
+}
+
+#debug-panel input[type="checkbox"]{
+    margin: 10px;
+    transform: scale(2);
+    cursor: pointer;
+}
+
+#debug-panel label{
+    margin: auto;
 }

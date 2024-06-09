@@ -11,5 +11,44 @@
 </head>
 <body>
     <canvas height="1" width="1"></canvas>
+    <div id="debug-panel">
+        <div id="seed-info-container">
+            <h3>Map Seed:</h3>
+            <div id="map-seed-info">0</div>
+            <h3>Altitude Seed:</h3>
+            <div id="alt-seed-info">0</div>
+            <h3>Temperature Seed:</h3>
+            <div id="temp-seed-info">0</div>
+            <h3>Moisture Seed:</h3>
+            <div id="moist-seed-info">0</div>
+        </div>
+        <hr>
+        <div class="option-container">
+            <label for="debug-none-option">Show None</label>
+            <input id="debug-none-option" type="radio" name="show-noise" value="none" checked>
+        </div>
+        <div class="option-container">
+            <label for="debug-alt-option">Show Altitude</label>
+            <input id="debug-alt-option" type="radio" name="show-noise" value="altitude">
+        </div>
+        <div class="option-container">
+            <label for="debug-temp-option">Show Temperature</label>
+            <input id="debug-temp-option" type="radio" name="show-noise" value="temperature">
+        </div>
+        <div class="option-container">
+            <label for="debug-moist-option">Show Moisture</label>
+            <input id="debug-moist-option" type="radio" name="show-noise" value="moisture">
+        </div>
+        <hr>
+        <div class="option-container">
+            <label for="debug-settlements-spawn">Settlements Spawns</label>
+            <input id="debug-possible-settlements" type="checkbox" name="show-possible-settlements">
+        </div>
+        <div class="option-container">
+            <label for="debug-roads">Show Roads</label>
+            <input id="debug-roads" type="checkbox" name="debug-roads" checked>
+        </div>
+        <button id="new-map-button">Generate New Map</buttond>
+    </div>
 </body>
 </html>

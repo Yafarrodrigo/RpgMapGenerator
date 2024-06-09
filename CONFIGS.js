@@ -1,18 +1,31 @@
 const CONFIGS = {
-    seed: 1,
     mapWidth: 1000,
     mapHeight: 1000,
     mapTileSize: 5,
 
-    perlinScale: 50,
-    perlinLacunarity: 5,
-    perlinPersistance: 0.3,
-    temperatureFreq: 1,
-    temperatureOctaves: 5,
-    moistureFreq: 0.5,
-    moistureOctaves: 20,
-    altitudeFreq: 1,
-    altitudeOctaves: 20,
+    perlin:{
+        temperature:{
+            scale: 150,
+            frequency: 2,
+            octaves: 5,
+            lacunarity: 5,
+            persistance: 0.3
+        },
+        moisture:{
+            scale: 150,
+            frequency: 1,
+            octaves: 5,
+            lacunarity: 5,
+            persistance: 0.35
+        },
+        altitude:{
+            scale: 50,
+            frequency: 0.5,
+            octaves: 5,
+            lacunarity: 5,
+            persistance: 0.25
+        }
+    },
 
     qtySettlements: 5,
     

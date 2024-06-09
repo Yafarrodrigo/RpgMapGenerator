@@ -8,27 +8,39 @@ export default class MapGenerator{
         this.sizeY = height
         this.random = randomGen
 
+        this.noise = new Noise();
+
         this.tileSize = CONFIGS.mapTileSize
+
+        this.seeds = {
+            temperature: 0,
+            moisture: 0,
+            altitude: 0,
+        }
 
         this.cols = Math.floor(this.sizeX / this.tileSize)
         this.rows = Math.floor(this.sizeY / this.tileSize)
-        
-        // perlin parameters
-        this.scale = CONFIGS.perlinScale
-        this.lacunarity = CONFIGS.perlinLacunarity
-        this.persistance = CONFIGS.perlinPersistance
-
+    
         this.possibleSettlementSpawns = []
         this.settlements = []
     }
     
     generateMap(){
         const terrainMap = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
+        const { temperature:t, moisture:m, altitude:a } = CONFIGS.perlin
         const mapData = {}
-                                        // freq & octaves
-        mapData.temperature = this.generateNoiseMap(CONFIGS.temperatureFreq,CONFIGS.temperatureOctaves)
-        mapData.moisture = this.generateNoiseMap(CONFIGS.moistureFreq,CONFIGS.moistureOctaves)
-        mapData.altitude = this.generateNoiseMap(CONFIGS.altitudeFreq,CONFIGS.altitudeOctaves)
+
+        const tempNoiseMap = this.generateNoiseMap(t.scale, t.frequency, t.octaves, t.persistance, t.lacunarity)
+        mapData.temperature = tempNoiseMap.map
+        this.seeds.temperature = tempNoiseMap.seed
+
+        const moistNoiseMap = this.generateNoiseMap(m.scale, m.frequency, m.octaves, m.persistance, m.lacunarity)
+        mapData.moisture = moistNoiseMap.map
+        this.seeds.moisture = moistNoiseMap.seed
+
+        const altNoiseMap = this.generateNoiseMap(a.scale, a.frequency, a.octaves, a.persistance, a.lacunarity)
+        mapData.altitude = altNoiseMap.map
+        this.seeds.altitude = altNoiseMap.seed
     
         for(let x = 0; x < this.cols; x++){
             for(let y = 0; y < this.rows; y++){
@@ -37,59 +49,59 @@ export default class MapGenerator{
                 const moist = mapData.moisture[x][y]
     
                 // my abajo -> agua
-                if(Utils.between(alt, 0, 0.2)){
-                    terrainMap[x][y] = {x,y,biome:"deepWater", temp,moist,alt}
+                if(Utils.between(alt, 0, 0.3)){
+                    terrainMap[x][y] = {x,y,biome:"deepWater", temp,moist,alt,canSpawnSettlement:false}
                 }
-                else if(Utils.between(alt, 0.2, 0.24)){
-                    terrainMap[x][y] = {x,y,biome:"water", temp,moist,alt}
+                else if(Utils.between(alt, 0.3, 0.35)){
+                    terrainMap[x][y] = {x,y,biome:"water", temp,moist,alt,canSpawnSettlement:false}
                 }
                 // entre el agua y lo demas -> playa
-                else if(Utils.between(alt, 0.25, 0.29)){
-                    terrainMap[x][y] = {x,y,biome:"beach", temp,moist,alt}
+                else if(Utils.between(alt, 0.35, 0.4)){
+                    terrainMap[x][y] = {x,y,biome:"beach", temp,moist,alt,canSpawnSettlement:true}
                     this.possibleSettlementSpawns.push({x,y,biome:"beach", temp,moist,alt})
                 }
                 // lo demas, pero no muuuy alto -> diferentes biomas
-                else if(Utils.between(alt, 0.3, 0.9)){
+                else if(Utils.between(alt, 0.4, 0.7)){
                     // plains
                     if(moist <= 0.8 && Utils.between(temp,0.1,0.5) || moist <= 0.7 && Utils.between(temp,0.5,0.7)){
-                        terrainMap[x][y] = {x,y,biome:"plains", temp,moist,alt}
+                        terrainMap[x][y] = {x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:true}
                         this.possibleSettlementSpawns.push({x,y,biome:"plains", temp,moist,alt})
                     // forest
                     }else if(Utils.between(moist, 0.8,0.9) && Utils.between(temp,0.1,0.5)){
-                        terrainMap[x][y] = {x,y,biome:"forest", temp,moist,alt}
+                        terrainMap[x][y] = {x,y,biome:"forest", temp,moist,alt,canSpawnSettlement:true}
                         this.possibleSettlementSpawns.push({x,y,biome:"forest", temp,moist,alt})
                     }
                     // jungle
                     else if (Utils.between(moist,0.7,0.9) && Utils.between(temp,0.5,1)){
-                        terrainMap[x][y] = {x,y,biome:"jungle", temp,moist,alt}
+                        terrainMap[x][y] = {x,y,biome:"jungle", temp,moist,alt,canSpawnSettlement:true}
                         this.possibleSettlementSpawns.push({x,y,biome:"jungle", temp,moist,alt})
                     }
                     // desert
                     else if ((moist <= 0.7 && temp >= 0.7)){
-                        terrainMap[x][y] = {x,y,biome:"desert", temp,moist,alt}
+                        terrainMap[x][y] = {x,y,biome:"desert", temp,moist,alt,canSpawnSettlement:true}
                         this.possibleSettlementSpawns.push({x,y,biome:"desert", temp,moist,alt})
                     }
                     // oasis
                     else if((moist >= 0.9 && temp >= 0.7)){
-                        terrainMap[x][y] = {x,y,biome:"oasis", temp,moist,alt}
+                        terrainMap[x][y] = {x,y,biome:"oasis", temp,moist,alt,canSpawnSettlement:false}
                     }
                     // water (lakes,rivers)
                     else if (moist >= 0.9 && temp >= 0.1){
-                        terrainMap[x][y] = {x,y,biome:"lake", temp,moist,alt}
+                        terrainMap[x][y] = {x,y,biome:"lake", temp,moist,alt,canSpawnSettlement:false}
                     }else{
-                        terrainMap[x][y] = {x,y,biome:"????", temp,moist,alt}
+                        terrainMap[x][y] = {x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false}
                     }
                 }
                 // arriba de todo montañas y nieve
                 else{
-                    if(alt > 1.05 && temp < 0.1) terrainMap[x][y] = {x,y,biome:"snow", temp,moist,alt}
-                    else if(alt > 1.05) terrainMap[x][y] = {x,y,biome:"highMountain", temp,moist,alt}
-                    else if(alt > 1) terrainMap[x][y] = {x,y,biome:"midMountain", temp,moist,alt}
-                    else if(alt > 0.9){
-                        terrainMap[x][y] = {x,y,biome:"lowMountain", temp,moist,alt}
+                    if(alt > 0.9 && temp < 0.2) terrainMap[x][y] = {x,y,biome:"snow", temp,moist,alt,canSpawnSettlement:false}
+                    else if(alt > 0.9) terrainMap[x][y] = {x,y,biome:"highMountain", temp,moist,alt,canSpawnSettlement:false}
+                    else if(alt > 0.8) terrainMap[x][y] = {x,y,biome:"midMountain", temp,moist,alt,canSpawnSettlement:false}
+                    else if(alt > 0.7){
+                        terrainMap[x][y] = {x,y,biome:"lowMountain", temp,moist,alt,canSpawnSettlement:true}
                         this.possibleSettlementSpawns.push({x,y,biome:"lowMountain", temp,moist,alt})
                     }
-                    else terrainMap[x][y] = {x,y,biome:"????", temp,moist,alt}
+                    else terrainMap[x][y] = {x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false}
                 }
             }
         }
@@ -97,8 +109,9 @@ export default class MapGenerator{
         return terrainMap
     }
 
-    generateNoiseMap(freq, octaves){
-        const noise = new Noise(this.random()*99999);
+    generateNoiseMap(scale, freq, octaves, persistance, lacunarity){
+        const rndSeed = this.random()
+        this.noise.seed(rndSeed)
         const map = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
         let minNoiseHeight = 0
         let maxNoiseHeight = 0
@@ -110,24 +123,24 @@ export default class MapGenerator{
                 let amplitude = 1
     
                 for(let i = 0; i < octaves; i++){
-                    const sampleX = x / this.scale * frequency
-                    const sampleY = y / this.scale * frequency
+                    const sampleX = x / scale * frequency
+                    const sampleY = y / scale * frequency
     
-                    const value = Math.abs(noise.perlin2(sampleX,sampleY) + 0.5)
+                    const value = Math.abs(this.noise.perlin2(sampleX,sampleY) + 0.5)
                     noiseHeight += value * amplitude
     
-                    amplitude *= this.persistance
-                    frequency *= this.lacunarity
+                    amplitude *= persistance
+                    frequency *= lacunarity
                 }
     
                 if(noiseHeight > maxNoiseHeight) maxNoiseHeight = noiseHeight
                 else if(noiseHeight < minNoiseHeight) minNoiseHeight = noiseHeight
     
-                map[x][y] = noiseHeight
+                map[x][y] = Utils.invlerp(minNoiseHeight,maxNoiseHeight,noiseHeight)
             }
         }
         
-        return map
+        return {map,seed:rndSeed}
     }
 
     // sketchy pero funciona

@@ -3,6 +3,10 @@ export class Utils{
         return Math.min(max, Math.max(min, a))
     }
 
+    static invlerp(x, y, a){
+        return Utils.clamp((a - x) / (y - x));
+    }
+
     static between(stat, min ,max){
         return stat >= min && stat <= max
     }
