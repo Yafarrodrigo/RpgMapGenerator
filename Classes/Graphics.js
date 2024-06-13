@@ -27,6 +27,19 @@ export default class Graphics{
             // normal display
             if(DEBUG.showNoise === "none"){
                 this.draw(finalX,finalY,TileColors[tile.biome])
+                if(DEBUG.showResources){
+                    if(tile.resource !== null){
+                        if(tile.resource === "tree"){
+                            this.write(finalX,finalY,"t")
+                        }
+                        else if(tile.resource === "bush"){
+                            this.write(finalX,finalY,"b")
+                        }
+                        else if(tile.resource === "rock"){
+                            this.write(finalX,finalY,"r")
+                        }
+                    }
+                }
             }
             // debug altitude
             else if(DEBUG.showNoise === "altitude"){
@@ -86,6 +99,12 @@ export default class Graphics{
     draw(x,y,color){
         this.ctx.fillStyle = color
         this.ctx.fillRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
+    }
+
+    write(x,y,txt){
+        this.ctx.fillStyle = "black"
+        this.ctx.font = "Arial 20px" 
+        this.ctx.fillText(txt,x*this.viewTileSize + this.viewTileSize/2,y*this.viewTileSize + this.viewTileSize/2)
     }
 
     drawEmpty(x,y,color){
