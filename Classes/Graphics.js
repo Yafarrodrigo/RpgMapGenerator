@@ -5,7 +5,7 @@ import Viewport from "./Viewport.js"
 export default class Graphics{
     constructor(map){
         this.canvas = document.querySelector('canvas')
-        this.ctx = this.canvas.getContext('2d')
+        this.ctx = this.canvas.getContext('2d', {alpha: false})
 
         this.canvas.height = window.innerHeight-15
         this.canvas.width = window.innerWidth-15
@@ -16,7 +16,6 @@ export default class Graphics{
     }
 
     drawViewport(map,DEBUG){
-
         const {offset} = this.viewport
         for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
           for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
@@ -53,7 +52,6 @@ export default class Graphics{
         }
         this.drawSettlements(map)
 
-        
     }
 
     drawPaths(map){
@@ -73,7 +71,12 @@ export default class Graphics{
             const finalX = tile.x+offset.x
             const finalY = tile.y+offset.y
     
-            this.ctx.fillStyle = "blue"
+            if(tile.isConnected){
+                this.ctx.fillStyle = "blue"
+            }else{
+                this.ctx.fillStyle = "yellow"
+            }
+            
             this.ctx.beginPath()
             this.ctx.arc(finalX*this.viewTileSize,finalY*this.viewTileSize,map.tileSize,0,Math.PI*2)
             this.ctx.fill()

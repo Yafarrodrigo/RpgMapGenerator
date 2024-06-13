@@ -12,6 +12,12 @@ export default class Map{
         this.mapGen = new MapGenerator(width, height, randomGen)
         this.tiles = this.mapGen.generateMap()
         this.settlements = this.mapGen.placeRandomSettlements(CONFIGS.qtySettlements, this.tiles)
-        this.paths = this.mapGen.createRoadsBetweenSettlements(this.settlements, this.tiles)
+        this.paths = this.mapGen.connectSettlements(this.settlements,this.tiles)
+        
+        //remove settlements without roads
+        this.settlements = this.settlements.filter( s => s.isConnected)
     }
 }
+
+
+// MEJORAR ROADS ENTRE SETTLEMENTS !

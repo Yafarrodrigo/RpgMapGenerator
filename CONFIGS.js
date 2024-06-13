@@ -27,11 +27,11 @@ const CONFIGS = {
         }
     },
 
-    qtySettlements: 5,
+    qtySettlements: 10,
     
     viewTileSize: 5,
-    camStartOffsetX: 100,
-    camStartOffsetY: 100,
+    camStartOffsetX: 50,
+    camStartOffsetY: 50,
 }
 
 export default CONFIGS

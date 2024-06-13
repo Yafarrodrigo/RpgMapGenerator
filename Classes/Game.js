@@ -42,10 +42,7 @@ export default class Game{
             this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random)
         })
 
-        document.getElementById('map-seed-info').innerText = seed
-        document.getElementById('alt-seed-info').innerText = this.map.mapGen.seeds.altitude
-        document.getElementById('moist-seed-info').innerText = this.map.mapGen.seeds.moisture
-        document.getElementById('temp-seed-info').innerText = this.map.mapGen.seeds.temperature
+        this.updateSeedsDisplay(seed)
         document.querySelectorAll("input[name='show-noise']").forEach( option => {
             option.addEventListener("click", (e) => {
                 this.DEBUG.showNoise = e.target.value
@@ -57,6 +54,13 @@ export default class Game{
         document.getElementById('debug-roads').addEventListener("click", (e) => {
             this.DEBUG.showRoads = e.target.checked
         })
+    }
+
+    updateSeedsDisplay(seed){
+        document.getElementById('map-seed-info').innerText = seed
+        document.getElementById('alt-seed-info').innerText = this.map.mapGen.seeds.altitude
+        document.getElementById('moist-seed-info').innerText = this.map.mapGen.seeds.moisture
+        document.getElementById('temp-seed-info').innerText = this.map.mapGen.seeds.temperature
     }
 
     update(){

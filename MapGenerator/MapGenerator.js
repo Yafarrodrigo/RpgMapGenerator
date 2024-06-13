@@ -1,6 +1,8 @@
 import { Utils } from "../Utils/Utils.js"
 import FindPath from "../Utils/AStar.js"
 import CONFIGS from "../CONFIGS.js"
+import Tile from "./Tile.js"
+import Settlement from "./Settlement.js"
 
 export default class MapGenerator{
     constructor(width, height, randomGen){
@@ -26,6 +28,7 @@ export default class MapGenerator{
     }
     
     generateMap(){
+
         const terrainMap = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
         const { temperature:t, moisture:m, altitude:a } = CONFIGS.perlin
         const mapData = {}
@@ -41,71 +44,71 @@ export default class MapGenerator{
         const altNoiseMap = this.generateNoiseMap(a.scale, a.frequency, a.octaves, a.persistance, a.lacunarity)
         mapData.altitude = altNoiseMap.map
         this.seeds.altitude = altNoiseMap.seed
-    
+        
         for(let x = 0; x < this.cols; x++){
             for(let y = 0; y < this.rows; y++){
                 const temp = mapData.temperature[x][y]
                 const alt = mapData.altitude[x][y]
                 const moist = mapData.moisture[x][y]
-    
+
                 // my abajo -> agua
                 if(Utils.between(alt, 0, 0.3)){
-                    terrainMap[x][y] = {x,y,biome:"deepWater", temp,moist,alt,canSpawnSettlement:false}
+                    terrainMap[x][y] = new Tile({x,y,biome:"deepWater", temp,moist,alt,canSpawnSettlement:false})
                 }
                 else if(Utils.between(alt, 0.3, 0.35)){
-                    terrainMap[x][y] = {x,y,biome:"water", temp,moist,alt,canSpawnSettlement:false}
+                    terrainMap[x][y] = new Tile({x,y,biome:"water", temp,moist,alt,canSpawnSettlement:false})
                 }
                 // entre el agua y lo demas -> playa
                 else if(Utils.between(alt, 0.35, 0.4)){
-                    terrainMap[x][y] = {x,y,biome:"beach", temp,moist,alt,canSpawnSettlement:true}
-                    this.possibleSettlementSpawns.push({x,y,biome:"beach", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({x,y,biome:"beach", temp,moist,alt,canSpawnSettlement:true})
+                    this.possibleSettlementSpawns.push({x,y})
                 }
                 // lo demas, pero no muuuy alto -> diferentes biomas
                 else if(Utils.between(alt, 0.4, 0.7)){
                     // plains
                     if(moist <= 0.8 && Utils.between(temp,0.1,0.5) || moist <= 0.7 && Utils.between(temp,0.5,0.7)){
-                        terrainMap[x][y] = {x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:true}
-                        this.possibleSettlementSpawns.push({x,y,biome:"plains", temp,moist,alt})
+                        terrainMap[x][y] = new Tile({x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:true})
+                        this.possibleSettlementSpawns.push({x,y})
                     // forest
                     }else if(Utils.between(moist, 0.8,0.9) && Utils.between(temp,0.1,0.5)){
-                        terrainMap[x][y] = {x,y,biome:"forest", temp,moist,alt,canSpawnSettlement:true}
-                        this.possibleSettlementSpawns.push({x,y,biome:"forest", temp,moist,alt})
+                        terrainMap[x][y] = new Tile({x,y,biome:"forest", temp,moist,alt,canSpawnSettlement:true})
+                        this.possibleSettlementSpawns.push({x,y})
                     }
                     // jungle
                     else if (Utils.between(moist,0.7,0.9) && Utils.between(temp,0.5,1)){
-                        terrainMap[x][y] = {x,y,biome:"jungle", temp,moist,alt,canSpawnSettlement:true}
-                        this.possibleSettlementSpawns.push({x,y,biome:"jungle", temp,moist,alt})
+                        terrainMap[x][y] = new Tile({x,y,biome:"jungle", temp,moist,alt,canSpawnSettlement:true})
+                        this.possibleSettlementSpawns.push({x,y})
                     }
                     // desert
                     else if ((moist <= 0.7 && temp >= 0.7)){
-                        terrainMap[x][y] = {x,y,biome:"desert", temp,moist,alt,canSpawnSettlement:true}
-                        this.possibleSettlementSpawns.push({x,y,biome:"desert", temp,moist,alt})
+                        terrainMap[x][y] = new Tile({x,y,biome:"desert", temp,moist,alt,canSpawnSettlement:true})
+                        this.possibleSettlementSpawns.push({x,y})
                     }
                     // oasis
                     else if((moist >= 0.9 && temp >= 0.7)){
-                        terrainMap[x][y] = {x,y,biome:"oasis", temp,moist,alt,canSpawnSettlement:false}
+                        terrainMap[x][y] = new Tile({x,y,biome:"oasis", temp,moist,alt,canSpawnSettlement:false})
                     }
                     // water (lakes,rivers)
                     else if (moist >= 0.9 && temp >= 0.1){
-                        terrainMap[x][y] = {x,y,biome:"lake", temp,moist,alt,canSpawnSettlement:false}
+                        terrainMap[x][y] = new Tile({x,y,biome:"lake", temp,moist,alt,canSpawnSettlement:false})
                     }else{
-                        terrainMap[x][y] = {x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false}
+                        terrainMap[x][y] = new Tile({x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false})
                     }
                 }
                 // arriba de todo montañas y nieve
                 else{
-                    if(alt > 0.9 && temp < 0.2) terrainMap[x][y] = {x,y,biome:"snow", temp,moist,alt,canSpawnSettlement:false}
-                    else if(alt > 0.9) terrainMap[x][y] = {x,y,biome:"highMountain", temp,moist,alt,canSpawnSettlement:false}
-                    else if(alt > 0.8) terrainMap[x][y] = {x,y,biome:"midMountain", temp,moist,alt,canSpawnSettlement:false}
+                    if(alt > 0.9 && temp < 0.2) terrainMap[x][y] = new Tile({x,y,biome:"snow", temp,moist,alt,canSpawnSettlement:false})
+                    else if(alt > 0.9) terrainMap[x][y] = new Tile({x,y,biome:"highMountain", temp,moist,alt,canSpawnSettlement:false})
+                    else if(alt > 0.8) terrainMap[x][y] = new Tile({x,y,biome:"midMountain", temp,moist,alt,canSpawnSettlement:false})
                     else if(alt > 0.7){
-                        terrainMap[x][y] = {x,y,biome:"lowMountain", temp,moist,alt,canSpawnSettlement:true}
-                        this.possibleSettlementSpawns.push({x,y,biome:"lowMountain", temp,moist,alt})
+                        terrainMap[x][y] = new Tile({x,y,biome:"lowMountain", temp,moist,alt,canSpawnSettlement:true})
+                        this.possibleSettlementSpawns.push({x,y})
                     }
-                    else terrainMap[x][y] = {x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false}
+                    else terrainMap[x][y] = new Tile({x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false})
                 }
             }
         }
-    
+        
         return terrainMap
     }
 
@@ -126,7 +129,7 @@ export default class MapGenerator{
                     const sampleX = x / scale * frequency
                     const sampleY = y / scale * frequency
     
-                    const value = Math.abs(this.noise.perlin2(sampleX,sampleY) + 0.5)
+                    const value = Math.abs(this.noise.perlin2(sampleX,sampleY) + 0.5) // el +0.5 es dudoso
                     noiseHeight += value * amplitude
     
                     amplitude *= persistance
@@ -136,7 +139,13 @@ export default class MapGenerator{
                 if(noiseHeight > maxNoiseHeight) maxNoiseHeight = noiseHeight
                 else if(noiseHeight < minNoiseHeight) minNoiseHeight = noiseHeight
     
-                map[x][y] = Utils.invlerp(minNoiseHeight,maxNoiseHeight,noiseHeight)
+                map[x][y] = noiseHeight
+            }
+        }
+
+        for(let x = 0; x < this.cols; x++){
+            for(let y = 0; y < this.rows; y++){
+                map[x][y] = Utils.invlerp(minNoiseHeight,maxNoiseHeight,map[x][y])
             }
         }
         
@@ -158,7 +167,7 @@ export default class MapGenerator{
         MAP[x][y].settlement = true
         MAP[x][y].settlementId = idCounter
         idCounter++
-        settlements.push(MAP[x][y])
+        settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y, MAP))
 
         for(let i = 0; i < qty-1; i++){
             let found = false
@@ -173,14 +182,14 @@ export default class MapGenerator{
                     let yy = settlements[j].y
                     distances.push(Utils.distance(x,y,xx,yy))
                 }
-                if(distances.filter( dist => dist < 100).length == 0) found = true
+                if(distances.filter( dist => dist < 50).length == 0) found = true
                 safeCounter++
             }
             if(found === true){
                 MAP[x][y].settlement = true
                 MAP[x][y].settlementId = idCounter
                 idCounter++
-                settlements.push(MAP[x][y]) 
+                settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y, MAP)) 
             }
         }
 
@@ -188,15 +197,51 @@ export default class MapGenerator{
         return settlements
     }
 
-    createRoadsBetweenSettlements(settlements,map){
+    connectSettlements(settlements, map){
         const paths = []
-        for(let i = 0; i < settlements.length-1; i++){
-            for(let j = i+1; j < settlements.length; j++){
-                const current = settlements[i]
-                const target = settlements[j]
-                const path = FindPath(current,target,map)
-                if(path !== undefined) paths.push(path)
+        let nearestSettlement = null
+        let farthestSettlement = null
+        let minDist = Number.POSITIVE_INFINITY
+        let maxDist = 0
+        for(let i = 0; i < settlements.length; i++){
+            const settlement = settlements[i]
+            for(let j = 0; j < settlements.length; j++){
+                
+                const currentTarget = settlements[j]
+                const {x,y} = settlement
+                const {x:x2,y:y2} = currentTarget
+
+                if(x === x2 && y === y2) continue
+
+                const dist = Utils.distance(x,y,x2,y2)
+
+                if(dist < minDist){
+                    minDist = dist
+                    nearestSettlement = currentTarget
+                }
+                if(dist > maxDist){
+                    maxDist = dist
+                    farthestSettlement = currentTarget
+                }
             }
+            let newPath
+            if(nearestSettlement !== null){
+                newPath = FindPath(settlement,nearestSettlement,map)
+                if(newPath !== undefined && newPath.length >1){
+                    paths.push(newPath)
+                    settlement.isConnected = true
+                    nearestSettlement.isConnected = true
+                } 
+                
+             }
+             if(farthestSettlement !== null){
+                newPath = FindPath(settlement,farthestSettlement,map)
+                if(newPath !== undefined  && newPath.length >1){
+                    paths.push(newPath)
+                    settlement.isConnected = true
+                    farthestSettlement.isConnected = true
+                }
+             }
         }
 
         return paths
