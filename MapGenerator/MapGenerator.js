@@ -97,7 +97,7 @@ export default class MapGenerator{
                 }
                 // arriba de todo montañas y nieve
                 else{
-                    if(alt > 0.9 && temp < 0.2) terrainMap[x][y] = new Tile({x,y,biome:"snow", temp,moist,alt,canSpawnSettlement:false})
+                    if(alt > 0.925 && temp < 0.2) terrainMap[x][y] = new Tile({x,y,biome:"snow", temp,moist,alt,canSpawnSettlement:false})
                     else if(alt > 0.9) terrainMap[x][y] = new Tile({x,y,biome:"highMountain", temp,moist,alt,canSpawnSettlement:false})
                     else if(alt > 0.8) terrainMap[x][y] = new Tile({x,y,biome:"midMountain", temp,moist,alt,canSpawnSettlement:false})
                     else if(alt > 0.7){

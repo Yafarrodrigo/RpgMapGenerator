@@ -43,7 +43,7 @@ export default class Tile{
                 chosenResource = null
             }
         }
-        else if(biome === "lowMountain"){
+        else if(biome === "lowMountain" || biome === "midMountain"){
             const r = Math.random()
             if(r >= 0.975){
                 chosenResource = "bush"

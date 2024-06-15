@@ -15,4 +15,19 @@ export class Utils{
     static distance(x0,y0,x1,y1){
         return Math.abs(x1-x0) + Math.abs(y1-y0)
     }
+
+    static weightedRandom(options) {
+        let weights = [options[0].weight];
+    
+        for (let i = 1; i < options.length; i++)
+            weights[i] = options[i].weight + weights[i - 1];
+        
+        let random = Math.random() * weights[weights.length - 1];
+        
+        for (i = 0; i < weights.length; i++)
+            if (weights[i] > random)
+                break;
+        
+        return options[i].value;
+    }
 }
