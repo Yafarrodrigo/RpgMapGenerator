@@ -1,5 +1,6 @@
 export default class Tile{
-    constructor({x,y,biome,temp,moist,alt,canSpawnSettlement}){
+    constructor({id,x,y,biome,temp,moist,alt,canSpawnSettlement}){
+        this.id = id
         this.x = x
         this.y = y
         this.biome = biome

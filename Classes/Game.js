@@ -9,9 +9,9 @@ export default class Game{
         if(!seed){
             seed = Math.random()
         }
-        const randomNumberenerator = mulberry32(seed*9999) 
+        const randomNumberenerator = mulberry32(seed*9999)
         this.random =randomNumberenerator
-        this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random)
+        this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
         this.graphics = new Graphics(this.map)
         this.controls = new Controls(this)
 
@@ -22,7 +22,7 @@ export default class Game{
             showNoise: "none", // "altitude", "moisture", "temperature"
             showSettlementSpawns: false,
             showRoads: true,
-            showResources: true
+            showResources: false
         }
 
         this.setupDebug(seed)
@@ -37,10 +37,15 @@ export default class Game{
     }
 
     setupDebug(seed){
-
         document.getElementById('new-map-button').addEventListener('click', (e) => {
+            if(!this.map.mapGen.genAvailable) return
+            this.map.mapGen.genAvailable = false
+
             e.preventDefault();
-            this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random)
+            const newSeed = Math.random()*9999
+            const randomNumberenerator = mulberry32(newSeed*9999)
+            this.random = randomNumberenerator
+            this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, newSeed)
         })
 
         this.updateSeedsDisplay(seed)
@@ -103,7 +108,9 @@ export default class Game{
         this.cameraOffsetY += viewport.velocity.y
     
         
-        viewport.updateViewport(this.cameraOffsetX,this.cameraOffsetY)
-        this.graphics.update(this.map,this.DEBUG)
+        if(this.map.tiles.length > 0){
+            viewport.updateViewport(this.cameraOffsetX,this.cameraOffsetY)
+            this.graphics.update(this.map,this.DEBUG)
+        }
     }
 }

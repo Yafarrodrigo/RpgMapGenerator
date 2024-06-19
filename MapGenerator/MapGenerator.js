@@ -5,12 +5,10 @@ import Tile from "./Tile.js"
 import Settlement from "./Settlement.js"
 
 export default class MapGenerator{
-    constructor(width, height, randomGen){
+    constructor(width, height, randomGen, seed){
         this.sizeX = width
         this.sizeY = height
         this.random = randomGen
-
-        this.noise = new Noise();
 
         this.tileSize = CONFIGS.mapTileSize
 
@@ -25,6 +23,8 @@ export default class MapGenerator{
     
         this.possibleSettlementSpawns = []
         this.settlements = []
+        
+        this.genAvailable = false
     }
     
     generateMap(){

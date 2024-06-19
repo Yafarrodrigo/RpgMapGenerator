@@ -14,9 +14,6 @@
  *
  */
 
-(function(global){
-
-    // Passing in seed will seed this Noise instance
     function Noise(seed) {
       function Grad(x, y, z) {
         this.x = x; this.y = y; this.z = z;
@@ -321,13 +318,5 @@
             lerp(n011, n111, u), w),
          v);
     };
-  
-    if (typeof module === "object" && module && typeof module.exports === "object") {
-      module.exports = Noise;
-    } else if (typeof define === "function" && define.amd) {
-      define([], function () { return Noise; } );
-    } else {
-      global.Noise = Noise;
-    }
-  
-  })(this);
+
+  export default Noise

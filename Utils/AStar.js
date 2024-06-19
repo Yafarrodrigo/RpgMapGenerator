@@ -50,6 +50,11 @@ export default function FindPath(start,end,originalMap){
                 finalPath.push(temp.previous)
                 temp = temp.previous
             }
+
+            finalPath.forEach( tile => {
+                tile.previous = null
+                tile.neighbors = null
+            })
             return finalPath
         }
 
