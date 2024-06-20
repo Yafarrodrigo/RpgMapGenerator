@@ -3,6 +3,7 @@ export default function FindPath(start,end,originalMap){
     // TWEAKED FOR ROADS ONLY!
 
     const map = structuredClone(originalMap)
+    //const map = originalMap
     const openSet = []
     const closedSet = []
     const finalPath = []
@@ -60,7 +61,6 @@ export default function FindPath(start,end,originalMap){
 
         closedSet.push(current)
         openSet.splice(winner, 1)
-
 
         for(let i = 0; i < current.neighbors.length; i++){
             const currentNeighbor = current.neighbors[i]

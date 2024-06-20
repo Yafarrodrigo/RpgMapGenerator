@@ -56,10 +56,6 @@ export default class Graphics{
           }
         }
 
-        if(DEBUG.showSettlementSpawns){
-            this.debugSettlementSpawns(map)
-        }
-
         if(DEBUG.showRoads){
             this.drawPaths(map)
         }
@@ -110,17 +106,6 @@ export default class Graphics{
     drawEmpty(x,y,color){
         this.ctx.strokeStyle = color
         this.ctx.strokeRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
-    }
-
-    debugSettlementSpawns(map){
-        const {offset} = this.viewport
-    
-        map.mapGen.possibleSettlementSpawns.forEach( spawn => {
-
-            const finalX = spawn.x+offset.x
-            const finalY = spawn.y+offset.y
-            this.drawEmpty(finalX,finalY,"red")
-        })
     }
 
     update(map, DEBUG){

@@ -20,7 +20,6 @@ export default class Game{
 
         this.DEBUG = {
             showNoise: "none", // "altitude", "moisture", "temperature"
-            showSettlementSpawns: false,
             showRoads: true,
             showResources: false
         }
@@ -53,9 +52,6 @@ export default class Game{
             option.addEventListener("click", (e) => {
                 this.DEBUG.showNoise = e.target.value
             })
-        })
-        document.getElementById('debug-possible-settlements').addEventListener("click", (e) => {
-            this.DEBUG.showSettlementSpawns = e.target.checked
         })
         document.getElementById('debug-resources').addEventListener("click", (e) => {
             this.DEBUG.showResources = e.target.checked

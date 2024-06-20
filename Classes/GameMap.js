@@ -21,6 +21,8 @@ export default class Map{
                 this.tiles = data.map
                 this.mapGen.seeds = data.seeds
                 
+                this.updateNeighbours()
+                
                 // update UI
                 document.getElementById('map-seed-info').innerText = seed
                 document.getElementById('alt-seed-info').innerText = data.seeds.altitude
@@ -35,7 +37,7 @@ export default class Map{
                 this.tiles = data.map
                 this.settlements = data.settlements
                 document.getElementById("progress").innerHTML = "100%"
-                
+
                 // add roads
                 this.paths = data.roads
                 document.getElementById("progressTxt").innerHTML = "Done"
@@ -46,5 +48,29 @@ export default class Map{
                 document.getElementById("progress").innerHTML = data.progress +"%"
             }
         }
+    }
+
+    updateNeighbours(){
+        for(let x = 0; x < this.tiles.length; x++){
+            for(let y = 0; y < this.tiles[0].length; y++){
+                this.tiles[x][y].f = 0 // F = G + H
+                this.tiles[x][y].g = 0
+                this.tiles[x][y].h = 0
+                this.tiles[x][y].neighbors = []
+                this.tiles[x][y].previous = null
+                if(x > 0 && x < this.tiles.length-1 && y > 0 && y < this.tiles[0].length-1){
+                    this.tiles[x][y].neighbors.push(this.tiles[x+1][y])
+                    this.tiles[x][y].neighbors.push(this.tiles[x-1][y])
+                    this.tiles[x][y].neighbors.push(this.tiles[x][y+1])
+                    this.tiles[x][y].neighbors.push(this.tiles[x][y-1])
+                    // diagonals
+                    this.tiles[x][y].neighbors.push(this.tiles[x+1][y+1])
+                    this.tiles[x][y].neighbors.push(this.tiles[x-1][y-1])
+                    this.tiles[x][y].neighbors.push(this.tiles[x-1][y+1])
+                    this.tiles[x][y].neighbors.push(this.tiles[x+1][y-1])
+                }
+            }
+        }
+        return true
     }
 }

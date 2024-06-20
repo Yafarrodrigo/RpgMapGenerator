@@ -21,7 +21,6 @@ export default class MapGenerator{
         this.cols = Math.floor(this.sizeX / this.tileSize)
         this.rows = Math.floor(this.sizeY / this.tileSize)
     
-        this.possibleSettlementSpawns = []
         this.settlements = []
         
         this.genAvailable = false

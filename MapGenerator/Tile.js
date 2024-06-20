@@ -8,6 +8,11 @@ export default class Tile{
         this.moist = moist
         this.alt = alt
         this.canSpawnSettlement = canSpawnSettlement
+        this.neighbors = []
+        this.f = 0
+        this.g = 0
+        this.h = 0
+        this.previous = null
 
         let chosenResource = null
         if(biome === "plains"){

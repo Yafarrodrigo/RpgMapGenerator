@@ -209,7 +209,7 @@ function placeRandomSettlements(){
                 let yy = settlements[j].y
                 distances.push(Utils.distance(x,y,xx,yy))
             }
-            if(distances.filter( dist => dist < 50).length == 0) found = true
+            if(distances.filter( dist => dist < 100).length == 0) found = true
             safeCounter++
         }
         if(found === true){
