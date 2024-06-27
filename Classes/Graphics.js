@@ -29,14 +29,17 @@ export default class Graphics{
                 this.draw(finalX,finalY,TileColors[tile.biome])
                 if(DEBUG.showResources){
                     if(tile.resource !== null){
-                        if(tile.resource === "tree"){
-                            this.write(finalX,finalY,"t")
+                        if(tile.resource === "trees"){
+                            this.write(finalX,finalY,"t","brown")
                         }
-                        else if(tile.resource === "bush"){
-                            this.write(finalX,finalY,"b")
+                        else if(tile.resource === "bushes"){
+                            this.write(finalX,finalY,"b", "lightgreen")
                         }
-                        else if(tile.resource === "rock"){
-                            this.write(finalX,finalY,"r")
+                        else if(tile.resource === "rocks"){
+                            this.write(finalX,finalY,"r","gray")
+                        }
+                        else if(tile.resource === "pebbles"){
+                            this.write(finalX,finalY,"p","gray")
                         }
                     }
                 }
@@ -97,9 +100,9 @@ export default class Graphics{
         this.ctx.fillRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
     }
 
-    write(x,y,txt){
-        this.ctx.fillStyle = "black"
-        this.ctx.font = "Arial 20px" 
+    write(x,y,txt,color){
+        this.ctx.fillStyle = color
+        this.ctx.font = "bold 15pt Arial"
         this.ctx.fillText(txt,x*this.viewTileSize + this.viewTileSize/2,y*this.viewTileSize + this.viewTileSize/2)
     }
 

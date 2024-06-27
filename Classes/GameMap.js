@@ -1,5 +1,6 @@
 import CONFIGS from "../CONFIGS.js";
 import MapGenerator from "../MapGenerator/MapGenerator.js";
+import Tile from "./Tile.js";
 
 export default class Map{
     constructor(width, height, randomGen, seed){
@@ -18,10 +19,14 @@ export default class Map{
         this.mapGen.mapGenWorker.postMessage({txt:"start", seed})
         this.mapGen.mapGenWorker.onmessage = ({data}) => {
             if(data.txt === "finished terrain"){
-                this.tiles = data.map
+                this.tiles = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
+                for(let x = 0; x < this.cols; x++){
+                    for(let y = 0; y < this.rows; y++){
+                        const {id,biome,temp,moist,alt,canSpawnSettlement} = data.map[x][y]
+                        this.tiles[x][y] = new Tile({id,x,y,biome,temp,moist,alt,canSpawnSettlement})
+                    }
+                }
                 this.mapGen.seeds = data.seeds
-                
-                this.updateNeighbours()
                 
                 // update UI
                 document.getElementById('map-seed-info').innerText = seed
@@ -34,18 +39,21 @@ export default class Map{
                 this.mapGen.mapGenWorker.postMessage({txt:"add settlements"})
             }
             else if(data.txt === "finished settlements"){
-                this.tiles = data.map
-                this.settlements = data.settlements
+                this.settlements = data.settlements.filter( set => set.isConnected)
                 document.getElementById("progress").innerHTML = "100%"
 
                 // add roads
                 this.paths = data.roads
+                this.paths.forEach( path => path.forEach( ({x,y}) => {
+                    this.tiles[x][y].changeTile("road")
+                }))
+
                 document.getElementById("progressTxt").innerHTML = "Done"
                 document.getElementById("progress").innerHTML = ""
                 this.mapGen.genAvailable = true
             }
             else if (data.txt === "progress") {
-                document.getElementById("progress").innerHTML = data.progress +"%"
+                document.getElementById("progress").innerText = data.progress +"%"
             }
         }
     }

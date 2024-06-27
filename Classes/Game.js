@@ -20,7 +20,7 @@ export default class Game{
 
         this.DEBUG = {
             showNoise: "none", // "altitude", "moisture", "temperature"
-            showRoads: true,
+            showRoads: false,
             showResources: false
         }
 

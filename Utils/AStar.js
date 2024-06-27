@@ -46,9 +46,9 @@ export default function FindPath(start,end,originalMap){
         if(current.x == end.x && current.y == end.y){
             // find path and return it
             let temp = current
-            finalPath.push(temp)
+            finalPath.push({x:temp.x,y:temp.y})
             while(temp.previous !== null){
-                finalPath.push(temp.previous)
+                finalPath.push({x:temp.previous.x,y:temp.previous.y})
                 temp = temp.previous
             }
 

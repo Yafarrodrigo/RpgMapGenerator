@@ -1,6 +1,6 @@
 const CONFIGS = {
-    mapWidth: 1500,
-    mapHeight: 1500,
+    mapWidth: 1000,
+    mapHeight: 1000,
     mapTileSize: 5,
 
     perlin:{

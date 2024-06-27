@@ -17,9 +17,12 @@ export class Utils{
     }
 
     static weightedRandom(options) {
+        if(!options.length) return null
+
+        let i
         let weights = [options[0].weight];
     
-        for (let i = 1; i < options.length; i++)
+        for (i = 1; i < options.length; i++)
             weights[i] = options[i].weight + weights[i - 1];
         
         let random = Math.random() * weights[weights.length - 1];
@@ -28,6 +31,6 @@ export class Utils{
             if (weights[i] > random)
                 break;
         
-        return options[i].value;
+        return options[i].name;
     }
 }

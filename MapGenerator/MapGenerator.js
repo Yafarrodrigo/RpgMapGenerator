@@ -1,8 +1,8 @@
 import { Utils } from "../Utils/Utils.js"
 import FindPath from "../Utils/AStar.js"
 import CONFIGS from "../CONFIGS.js"
-import Tile from "./Tile.js"
-import Settlement from "./Settlement.js"
+import Tile from "../Classes/Tile.js"
+import Settlement from "../Classes/Settlement.js"
 
 export default class MapGenerator{
     constructor(width, height, randomGen, seed){

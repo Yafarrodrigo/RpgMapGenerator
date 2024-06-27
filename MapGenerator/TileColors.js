@@ -12,7 +12,7 @@ const TileColors = {
     midMountain: "#A59173",
     highMountain: "#7D695A",
     snow: "#D7EBEB",
-    "????": "#96C869"
+    road: "#807d7d"
 }
 
 export default TileColors

@@ -1,8 +1,8 @@
 import mulberry32 from "../Utils/mulberry32.js"
 import Noise from "../Utils/perlin.js"
 import {Utils} from "../Utils/Utils.js"
-import Tile from "../MapGenerator/Tile.js"
-import Settlement from "../MapGenerator/Settlement.js"
+import Tile from "../Classes/Tile.js"
+import Settlement from "../Classes/Settlement.js"
 import CONFIGS from "../CONFIGS.js"
 import FindPath from "../Utils/AStar.js"
 
@@ -17,18 +17,24 @@ onmessage = function({data}) {
 
         random = mulberry32(data.seed*9999)
         const noise = new Noise()
+        console.time("terrain")
         const {terrainMap: map, possibleSettlementSpawns, seeds} = generateMap(random,noise)
+        console.timeEnd("terrain")
         mapValues.terrainMap = map
         mapValues.possibleSettlementSpawns = possibleSettlementSpawns
         postMessage({txt:"finished terrain", map, seeds})
     }
     else if(data.txt === "add settlements"){
         
+        console.time("settlements")
         const {settlements, MAP} = placeRandomSettlements()
+        console.timeEnd("settlements")
         mapValues.terrainMap = MAP
         mapValues.settlements = settlements
 
+        console.time("roads")
         const roads = connectSettlements()
+        console.timeEnd("roads")
 
         postMessage({txt:"finished settlements", map:MAP, settlements, roads})
     }
@@ -114,7 +120,7 @@ function generateMap(random, noise){
                 else if (moist >= 0.9 && temp >= 0.1){
                     terrainMap[x][y] = new Tile({id,x,y,biome:"lake", temp,moist,alt,canSpawnSettlement:false})
                 }else{
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false})
+                    terrainMap[x][y] = new Tile({id,x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:false})
                 }
             }
             // arriba de todo montañas y nieve
@@ -126,7 +132,7 @@ function generateMap(random, noise){
                     terrainMap[x][y] = new Tile({id,x,y,biome:"lowMountain", temp,moist,alt,canSpawnSettlement:true})
                     possibleSettlementSpawns.push({x,y})
                 }
-                else terrainMap[x][y] = new Tile({id,x,y,biome:"????", temp,moist,alt,canSpawnSettlement:false})
+                else terrainMap[x][y] = new Tile({id,x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:false})
             }
         }
     }
@@ -232,11 +238,14 @@ function connectSettlements(){
     let minDist = Number.POSITIVE_INFINITY
     let maxDist = 0
     let counter = 0
-    let total = settlements.length
-    let progress
+    let progress = 0
+
     for(let i = 0; i < settlements.length; i++){
         const settlement = settlements[i]
         for(let j = 0; j < settlements.length; j++){
+        
+            progress = Math.floor(counter++ / (Math.pow(settlements.length,2)) * 100)
+            postMessage({txt:"progress",progress:counter})
 
             const currentTarget = settlements[j]
             const {x,y} = settlement
@@ -255,9 +264,7 @@ function connectSettlements(){
                 farthestSettlement = currentTarget
             }
         }
-        counter++
-        progress = Math.floor((counter/total)*100);
-        postMessage({txt:"progress",progress})
+        
         let newPath
         if(nearestSettlement !== null){
             newPath = FindPath(settlement,nearestSettlement,map)
