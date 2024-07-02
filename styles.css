@@ -64,6 +64,9 @@ canvas{
     border: 2px solid #555;
     border-radius: 5px;
     margin: auto;
+
+    /* PA DEBUGEAR */
+    display: none;
 }
 
 #debug-panel button{

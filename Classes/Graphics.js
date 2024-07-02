@@ -1,5 +1,4 @@
 import CONFIGS from "../CONFIGS.js"
-import TileColors from "../MapGenerator/TileColors.js"
 import Viewport from "./Viewport.js"
 
 export default class Graphics{
@@ -134,22 +133,8 @@ export default class Graphics{
         }
         else{
             this.ctx.font = `15pt Helvetica`
-            if(tile.resource === "trees"){
-                this.ctx.fillStyle = "SaddleBrown"
-                this.ctx.fillText("t" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
-            }
-            else if(tile.resource === "bushes"){
-                this.ctx.fillStyle = "lightgreen"
-                this.ctx.fillText("b" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
-            }
-            else if(tile.resource === "rocks"){
-                this.ctx.fillStyle = "gray"
-                this.ctx.fillText("r" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
-            }
-            else if(tile.resource === "pebbles"){
-                this.ctx.fillStyle = "gray"
-                this.ctx.fillText("p" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
-            }
+            this.ctx.fillStyle = tile.resource.color
+            this.ctx.fillText(tile.resource.character ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
         }
     }
 

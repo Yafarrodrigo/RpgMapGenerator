@@ -2,12 +2,9 @@ export default function FindPath(start,end,originalMap){
 
     // TWEAKED FOR ROADS ONLY!
 
-    const map = structuredClone(originalMap)
-    //const map = originalMap
+    const map = originalMap
     const openSet = []
-    const closedSet = []
     const finalPath = []
-    const diagonals = false
     // setup map for search
     for(let x = 0; x < map.length; x++){
         for(let y = 0; y < map[0].length; y++){
@@ -17,33 +14,33 @@ export default function FindPath(start,end,originalMap){
             map[x][y].neighbors = []
             map[x][y].previous = null
             if(x > 0 && x < map.length-1 && y > 0 && y < map[0].length-1){
-                map[x][y].neighbors.push(map[x+1][y])
-                map[x][y].neighbors.push(map[x-1][y])
-                map[x][y].neighbors.push(map[x][y+1])
-                map[x][y].neighbors.push(map[x][y-1])
-                if(diagonals){
-                    map[x][y].neighbors.push(map[x+1][y+1])
-                    map[x][y].neighbors.push(map[x-1][y-1])
-                    map[x][y].neighbors.push(map[x-1][y+1])
-                    map[x][y].neighbors.push(map[x+1][y-1])
-                }
+                if(checkAvailability(map[x+1][y])) map[x][y].neighbors.push(map[x+1][y])
+                if(checkAvailability(map[x-1][y])) map[x][y].neighbors.push(map[x-1][y])
+                if(checkAvailability(map[x][y+1])) map[x][y].neighbors.push(map[x][y+1])
+                if(checkAvailability(map[x][y-1])) map[x][y].neighbors.push(map[x][y-1])
             }
         }
     }
 
+    const openSetDict = {}
+    const closedSetDict = {}
+
     openSet.push(map[start.x][start.y])
+    openSetDict[`${start.x}-${start.y}`] = true
 
     let counter = 0
     while(openSet.length > 0 && counter < 1000){
         // find lowest F
         let winner = 0
-        for(let i = 0 ; i < openSet.length; i++){
+        for(let i = 0; i < openSet.length; i++){
             if(openSet[i].f < openSet[winner].f) winner = i
         }
         const current = openSet[winner]
+        openSetDict[`${current.x}-${current.y}`] = false
 
         // FOUND IT!
         if(current.x == end.x && current.y == end.y){
+
             // find path and return it
             let temp = current
             finalPath.push({x:temp.x,y:temp.y})
@@ -51,27 +48,26 @@ export default function FindPath(start,end,originalMap){
                 finalPath.push({x:temp.previous.x,y:temp.previous.y})
                 temp = temp.previous
             }
-
+            
             finalPath.forEach( tile => {
                 tile.previous = null
                 tile.neighbors = null
             })
+
             return finalPath
         }
 
-        closedSet.push(current)
+        closedSetDict[`${current.x}-${current.y}`] = true
         openSet.splice(winner, 1)
-
         for(let i = 0; i < current.neighbors.length; i++){
             const currentNeighbor = current.neighbors[i]
             // si el vecino NO esta en el closedSet ->
-            // Tmb checkeo altura, bioma, etc
-            if(!closedSet.includes(currentNeighbor) && checkAvailability(currentNeighbor)){
+            if(closedSetDict[`${currentNeighbor.x}-${currentNeighbor.y}`] !== true){
 
                 let tempG = current.g + 1
                 let newPath = false
                 // si esta en el openSet y el nuevo G es menor-> se updatea el G
-                if(openSet.includes(currentNeighbor)){
+                if(openSetDict[`${currentNeighbor.x}-${currentNeighbor.y}`] === true){
                     if(tempG < currentNeighbor.g){
                         currentNeighbor.g = tempG
                         newPath = true
@@ -81,10 +77,11 @@ export default function FindPath(start,end,originalMap){
                     currentNeighbor.g = tempG
                     newPath = true
                     openSet.push(currentNeighbor)
+                    openSetDict[`${currentNeighbor.x}-${currentNeighbor.y}`] = true
                 }
 
                 if(newPath){
-                    const tempH = heuristic2(currentNeighbor, end)
+                    const tempH = heuristic(currentNeighbor, end)
                     // prioriza caminos con temp media y baja alt y humedad
                     if(currentNeighbor.temp < 0.4 || currentNeighbor.temp > 0.5 ||
                         currentNeighbor.moist > 0.5 || currentNeighbor.alt > 0.5){
@@ -102,8 +99,8 @@ export default function FindPath(start,end,originalMap){
                 }
             }
         }
-        
     }
+    
 }
 
 // Manhattan distance
@@ -119,13 +116,12 @@ function heuristic2(node1,node2){
 }
 
 // check for available tiles
-function checkAvailability(currentNeighbor){
+function checkAvailability(tile){
     let result = true
-    const { biome } = currentNeighbor
-    if(biome === "lake" ||
-       biome === "water" ||
-       biome === "deepWater" ||
-       biome === "highMountain" ){
+    const { canHaveRoad, resource } = tile
+    if( !canHaveRoad ||
+       resource?.name === "trees" ||
+       resource?.name === "rocks" ){
 
             result = false
         }

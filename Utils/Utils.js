@@ -31,6 +31,6 @@ export class Utils{
             if (weights[i] > random)
                 break;
         
-        return options[i].name;
+        return options[i];
     }
 }

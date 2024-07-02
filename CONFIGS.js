@@ -30,13 +30,13 @@ const CONFIGS = {
     },
 
     qtySettlements: 10,
-    settlementMinDistance: 150,
+    settlementMinDistance: 100,
     
-    viewTileSize: 15 ,
+    defaultCharactersOffset: {x:0,y:15},   // {x:10,y:25}
+    viewTileSize: 15,                       // viewTileSize: 35
     camStartOffsetX: 40,
     camStartOffsetY: 40,
 
-    defaultCharactersOffset: {x:10,y:25} // --> viewTileSize: 35
 }
 
 export default CONFIGS

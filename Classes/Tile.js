@@ -13,6 +13,7 @@ export default class Tile{
         this.settlement = false
         this.canSpawnSettlement = canSpawnSettlement
         this.canWalk = TILES[biome].canWalk
+        this.canHaveRoad = TILES[biome].canHaveRoad
         this.character = TILES[biome].character[Math.floor(Math.random()*TILES[biome].character.length)]
         this.color = TILES[biome].color
 
@@ -40,7 +41,8 @@ export default class Tile{
             this.character = null
             this.settlement = true
         }else{
-            this.resource = Math.random() > 0.75 ? Utils.weightedRandom(TILES[tileId].resources) : null
+            const chosenResource = Math.random() > 0.75 ? Utils.weightedRandom(TILES[tileId].resources) : null
+            this.resource = chosenResource || null
             this.character = TILES[tileId].character[Math.floor(Math.random()*TILES[tileId].character.length)]
         }
     }

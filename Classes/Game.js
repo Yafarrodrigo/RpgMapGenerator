@@ -37,8 +37,8 @@ export default class Game{
 
     setupDebug(seed){
         document.getElementById('new-map-button').addEventListener('click', (e) => {
-            if(!this.map.mapGen.genAvailable) return
-            this.map.mapGen.genAvailable = false
+            if(!this.map.genAvailable) return
+            this.map.genAvailable = false
 
             e.preventDefault();
             const newSeed = Math.random()*9999
@@ -63,9 +63,9 @@ export default class Game{
 
     updateSeedsDisplay(seed){
         document.getElementById('map-seed-info').innerText = seed
-        document.getElementById('alt-seed-info').innerText = this.map.mapGen.seeds.altitude
-        document.getElementById('moist-seed-info').innerText = this.map.mapGen.seeds.moisture
-        document.getElementById('temp-seed-info').innerText = this.map.mapGen.seeds.temperature
+        document.getElementById('alt-seed-info').innerText = this.map.seeds.altitude
+        document.getElementById('moist-seed-info').innerText = this.map.seeds.moisture
+        document.getElementById('temp-seed-info').innerText = this.map.seeds.temperature
     }
 
     update(){
