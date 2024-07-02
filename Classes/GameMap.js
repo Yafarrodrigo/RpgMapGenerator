@@ -15,7 +15,7 @@ export default class Map{
         this.settlements = []
         this.paths = []
 
-        this.mapGen.mapGenWorker = new Worker("../Workers/MapGenWorker.js", {type: "module"})
+        this.mapGen.mapGenWorker = new Worker("/Workers/MapGenWorker.js", {type: "module"})
         this.mapGen.mapGenWorker.postMessage({txt:"start", seed})
         this.mapGen.mapGenWorker.onmessage = ({data}) => {
             if(data.txt === "finished terrain"){
@@ -34,7 +34,7 @@ export default class Map{
                 document.getElementById('moist-seed-info').innerText = data.seeds.moisture
                 document.getElementById('temp-seed-info').innerText = data.seeds.temperature
                 document.getElementById("progress").innerHTML = "0%"
-                document.getElementById("progressTxt").innerHTML = "Generating Settlements"
+                document.getElementById("progressTxt").innerHTML = "Connecting Settlements"
 
                 this.mapGen.mapGenWorker.postMessage({txt:"add settlements"})
             }
@@ -42,11 +42,16 @@ export default class Map{
                 this.settlements = data.settlements.filter( set => set.isConnected)
                 document.getElementById("progress").innerHTML = "100%"
 
-                // add roads
+                // change tiles to roads
                 this.paths = data.roads
                 this.paths.forEach( path => path.forEach( ({x,y}) => {
                     this.tiles[x][y].changeTile("road")
                 }))
+
+                // change tiles to settlements
+                this.settlements.forEach( ({x,y}) => {
+                    this.tiles[x][y].changeTile("settlement")
+                })
 
                 document.getElementById("progressTxt").innerHTML = "Done"
                 document.getElementById("progress").innerHTML = ""

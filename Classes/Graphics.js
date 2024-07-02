@@ -7,12 +7,26 @@ export default class Graphics{
         this.canvas = document.querySelector('canvas')
         this.ctx = this.canvas.getContext('2d', {alpha: false})
 
-        this.canvas.height = window.innerHeight-15
-        this.canvas.width = window.innerWidth-15
+        this.canvas.height = CONFIGS.canvasWidth//window.innerHeight-15
+        this.canvas.width = CONFIGS.canvasHeight//window.innerWidth-15
         
         this.viewTileSize = CONFIGS.viewTileSize
         
         this.viewport = new Viewport(this.canvas.width,this.canvas.height,map.rows,map.cols,this.viewTileSize)
+    }
+
+    drawASCIIViewport(map){
+        const {offset} = this.viewport
+        for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
+            for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
+                const tile = map.tiles[x][y]
+                if(!tile) continue
+                const finalX = tile.x+offset.x
+                const finalY = tile.y+offset.y
+
+                this.drawASCII(finalX,finalY,tile)
+            }
+        }
     }
 
     drawViewport(map,DEBUG){
@@ -100,19 +114,47 @@ export default class Graphics{
         this.ctx.fillRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
     }
 
-    write(x,y,txt,color){
-        this.ctx.fillStyle = color
-        this.ctx.font = "bold 15pt Arial"
-        this.ctx.fillText(txt,x*this.viewTileSize + this.viewTileSize/2,y*this.viewTileSize + this.viewTileSize/2)
-    }
+    drawASCII(x,y,tile){
+        // for debug only
+        //this.ctx.strokeStyle = "pink"
+        //this.ctx.strokeRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
 
-    drawEmpty(x,y,color){
-        this.ctx.strokeStyle = color
-        this.ctx.strokeRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
+        this.ctx.font = `${tile.character.size}pt Helvetica`
+        if(tile.resource === null){
+            this.ctx.fillStyle = tile.color
+            if(tile.biome === "road" || tile.biome === "settlement"){
+                this.ctx.fillRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
+            }else{
+                this.ctx.fillText(
+                    tile.character.value,
+                    x*this.viewTileSize + tile.character.offset.x + CONFIGS.defaultCharactersOffset.x,
+                    y*this.viewTileSize + tile.character.offset.y + CONFIGS.defaultCharactersOffset.y
+                )
+            }
+        }
+        else{
+            this.ctx.font = `15pt Helvetica`
+            if(tile.resource === "trees"){
+                this.ctx.fillStyle = "SaddleBrown"
+                this.ctx.fillText("t" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
+            }
+            else if(tile.resource === "bushes"){
+                this.ctx.fillStyle = "lightgreen"
+                this.ctx.fillText("b" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
+            }
+            else if(tile.resource === "rocks"){
+                this.ctx.fillStyle = "gray"
+                this.ctx.fillText("r" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
+            }
+            else if(tile.resource === "pebbles"){
+                this.ctx.fillStyle = "gray"
+                this.ctx.fillText("p" ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
+            }
+        }
     }
 
     update(map, DEBUG){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
-        this.drawViewport(map, DEBUG)
+        this.drawASCIIViewport(map, DEBUG)
     }
 }

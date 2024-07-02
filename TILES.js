@@ -9,6 +9,14 @@ const TILES = {
             {name: "bushes",weight: 7,color: "lightgreen"}
         ],
         color: "#96C869",
+        character: [
+            {value:",",offset: {x:5,y:-5},size: 30},
+            {value:".",offset: {x:0,y:0},size: 30},
+            {value:"'",offset: {x:5,y:17},size: 30},
+            {value:"`",offset: {x:0,y:25},size: 30},
+            {value:"´",offset: {x:0,y:25},size: 30},
+            {value:"\"",offset: {x:3,y:15},size: 30},
+        ]
     },
     forest: {
         id: "forest",
@@ -19,7 +27,15 @@ const TILES = {
             {name: "trees",weight: 8,color: "brown"},
             {name:"bushes",weight: 2,color: "lightgreen"}
         ],
-        color: "#46AF64",
+        color: "#1c7034",
+        character: [
+            {value:",",offset: {x:5,y:-5},size: 30},
+            {value:".",offset: {x:0,y:0},size: 30},
+            {value:"'",offset: {x:5,y:17},size: 30},
+            {value:"`",offset: {x:0,y:25},size: 30},
+            {value:"´",offset: {x:0,y:25},size: 30},
+            {value:"\"",offset: {x:3,y:15},size: 30},
+        ]
     },
     jungle: {
         id: "jungle",
@@ -30,7 +46,15 @@ const TILES = {
             {name: "trees",weight: 7,color: "brown"},
             {name:"bushes",weight: 2,color: "lightgreen"}
         ],
-        color: "#46AF64",
+        color: "#1c7034",
+        character: [
+            {value:",",offset: {x:5,y:-5},size: 30},
+            {value:".",offset: {x:0,y:0},size: 30},
+            {value:"'",offset: {x:5,y:17},size: 30},
+            {value:"`",offset: {x:0,y:25},size: 30},
+            {value:"´",offset: {x:0,y:25},size: 30},
+            {value:"\"",offset: {x:3,y:15},size: 30},
+        ]
     },
     beach: {
         id: "beach",
@@ -41,6 +65,10 @@ const TILES = {
             {name:"bushes",weight: 3,color: "lightgreen"}
         ],
         color: "#E1D791",
+        character: [
+            {value:"⋯",offset: {x:0,y:0},size: 20},
+            {value:"-",offset: {x:0,y:0},size: 20}
+        ]
     },
     desert: {
         id: "desert",
@@ -51,6 +79,10 @@ const TILES = {
             {name: "pebbles",weight: 4,color: "gray"},
         ],
         color: "#E1D791",
+        character: [
+            {value:"⋯",offset: {x:0,y:0},size: 20},
+            {value:"-",offset: {x:0,y:0},size: 20}
+        ]
     },
     lowMountain: {
         id: "lowMountain",
@@ -62,22 +94,29 @@ const TILES = {
             {name:"bushes",weight: 1,color: "lightgreen"}
         ],
         color: "#CDB991",
+        character: [
+            {value:".",offset: {x:0,y:0},size: 20}
+        ]
     },
     midMountain: {
         id: "midMountain",
         name: "midMountain",
         canWalk: true,
-        resources: [
-            {name: "rocks",weight: 10,color: "gray"}
-        ],
-        color: "#A59173",
+        resources: [],
+        color: "#82673e",
+        character: [
+            {value:"˄",offset: {x:0,y:0},size: 25}
+        ]
     },
     highMountain: {
         id: "highMountain",
         name: "highMountain",
         canWalk: false,
         resources: [],
-        color: "#7D695A",
+        color: "#66442b",
+        character: [
+            {value:"Δ",offset: {x:0,y:0},size: 20}
+        ]
     },
     deepWater: {
         id: "deepWater",
@@ -85,6 +124,9 @@ const TILES = {
         canWalk: false,
         resources: [],
         color: "#3C96AA",
+        character: [
+            {value:"≈",offset: {x:0,y:10},size: 30}
+        ]
     },
     water: {
         id: "water",
@@ -92,6 +134,9 @@ const TILES = {
         canWalk: true,
         resources: [],
         color: "#5AAFB9",
+        character: [
+            {value:"∼",offset: {x:-3,y:5},size: 30}
+        ]
     },
     lake: {
         id: "lake",
@@ -99,6 +144,9 @@ const TILES = {
         canWalk: false,
         resources: [],
         color: "#5AAFB9",
+        character: [
+            {value:"∼",offset: {x:-3,y:5},size: 30}
+        ]
     },
     oasis: {
         id: "oasis",
@@ -106,6 +154,9 @@ const TILES = {
         canWalk: true,
         resources: [],
         color: "#5AAFB9",
+        character: [
+            {value:"∼",offset: {x:-3,y:5},size: 30}
+        ]
     },
     snow: {
         id: "snow",
@@ -113,14 +164,28 @@ const TILES = {
         canWalk: false,
         resources: [],
         color: "#D7EBEB",
+        character: [
+            {value:"s",offset: {x:0,y:0},size: 20}
+        ]
     },
     road: {
         id: "road",
         name: "road",
         canWalk: true,
         resources: [],
-        color: "#807d7d",
+        color: "#848a4e",
+        character: [{value:"r",offset: {x:0,y:0},size: 20}]
+    },
+    settlement: {
+        id: "settlement",
+        name: "settlement",
+        canWalk: false,
+        resources: [],
+        color: "magenta",
+        character: [{value:"s",offset: {x:0,y:0},size: 20}]
     }
 }
+
+// cursor ⯐    ⦻   ☤   ☠  ☣
 
 export default TILES

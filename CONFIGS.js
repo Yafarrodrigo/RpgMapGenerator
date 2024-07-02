@@ -1,6 +1,8 @@
 const CONFIGS = {
-    mapWidth: 500,
-    mapHeight: 500,
+    canvasWidth: 750,
+    canvasHeight: 1200,
+    mapWidth: 1000,
+    mapHeight: 1000,
     mapTileSize: 5,
 
     perlin:{
@@ -28,10 +30,13 @@ const CONFIGS = {
     },
 
     qtySettlements: 10,
+    settlementMinDistance: 150,
     
-    viewTileSize: 5,
-    camStartOffsetX: 90,
-    camStartOffsetY: 90,
+    viewTileSize: 15 ,
+    camStartOffsetX: 40,
+    camStartOffsetY: 40,
+
+    defaultCharactersOffset: {x:10,y:25} // --> viewTileSize: 35
 }
 
 export default CONFIGS

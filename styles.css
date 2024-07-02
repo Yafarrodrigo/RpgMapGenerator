@@ -9,10 +9,12 @@
 body{
     background-color: black;
     color: white;
+    overflow: hidden;
 }
 
 canvas{
     border: 1px solid white;
+    margin: 5% 20%;
 }
 
 #debug-panel{
