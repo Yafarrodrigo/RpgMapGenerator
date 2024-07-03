@@ -33,7 +33,7 @@ export default class Graphics{
         this.ctx.font = `${tile.character.size}pt Helvetica`
         if(tile.resource === null){
             this.ctx.fillStyle = tile.color
-            if(tile.biome === "road"){
+            if(tile.isRoad){
                 this.ctx.fillRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
             }else{
                 this.ctx.fillText(

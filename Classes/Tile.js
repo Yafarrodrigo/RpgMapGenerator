@@ -12,12 +12,17 @@ export default class Tile{
         this.moist = moist
         this.alt = alt
 
+        this.tempValue = `${(50 * this.temp).toFixed(2)}°`
+        this.altValue = `${(this.alt -0.35) >= 0 ? (1000 * (this.alt -0.35)).toFixed(2) : 0}m`
+        this.moistValue = `${parseInt(50 * this.moist)}%`
+
         // variable
         this.biome = TILES[tileId].biome
-        this.settlement = false
+        this.isSettlement = false
         this.canSpawnSettlement = TILES[tileId].canSpawnSettlement
         this.canWalk = TILES[tileId].canWalk
         this.canHaveRoad = TILES[tileId].canHaveRoad
+        this.isRoad = false
         this.character = {...TILES[tileId].character[Math.floor(Math.random()*TILES[tileId].character.length)]}
         this.color = TILES[tileId].color
 
@@ -26,18 +31,20 @@ export default class Tile{
 
     changeTile(tileId){
         const newTile = TILES[tileId]
-        this.biome = newTile.biome
         this.color = newTile.color
         this.canWalk = newTile.canWalk
         this.canHaveRoad = newTile.canHaveRoad
-        if(newTile.biome === "road"){
+        if(tileId === "road"){
             this.resource = null
-            this.settlement = false
+            this.isSettlement = false
+            this.isRoad = true
         }else if(newTile.biome === "settlement"){
             this.resource = null
             this.character = null
-            this.settlement = true
+            this.isSettlement = true
+            this.isRoad = false
         }else{
+            this.biome = newTile.biome
             this.resource = this.getRandomResource(tileId)
             this.character = newTile.character[Math.floor(Math.random()*newTile.character.length)]
         }

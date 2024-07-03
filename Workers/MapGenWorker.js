@@ -195,7 +195,7 @@ function placeRandomSettlements(){
     randomIndex = Math.floor(random()*possibleSettlementSpawns.length)
     x = possibleSettlementSpawns[randomIndex].x
     y = possibleSettlementSpawns[randomIndex].y
-    MAP[x][y].settlement = true
+    MAP[x][y].isSettlement = true
     MAP[x][y].settlementId = idCounter
     idCounter++
     settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y))
@@ -220,7 +220,7 @@ function placeRandomSettlements(){
             safeCounter++
         }
         if(found === true){
-            MAP[x][y].settlement = true
+            MAP[x][y].isSettlement = true
             MAP[x][y].settlementId = idCounter
             idCounter++
             settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y)) 
