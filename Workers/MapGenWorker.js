@@ -81,58 +81,58 @@ function generateMap(random, noise){
             let id = y + (x*cols)
             // my abajo -> agua
             if(Utils.between(alt, 0, 0.3)){
-                terrainMap[x][y] = new Tile({id,x,y,biome:"deepWater", temp,moist,alt,canSpawnSettlement:false})
+                terrainMap[x][y] = new Tile({id,x,y,tileId:"deepWater", temp,moist,alt})
             }
             else if(Utils.between(alt, 0.3, 0.35)){
-                terrainMap[x][y] = new Tile({id,x,y,biome:"water", temp,moist,alt,canSpawnSettlement:false})
+                terrainMap[x][y] = new Tile({id,x,y,tileId:"water", temp,moist,alt})
             }
             // entre el agua y lo demas -> playa
             else if(Utils.between(alt, 0.35, 0.4)){
-                terrainMap[x][y] = new Tile({id,x,y,biome:"beach", temp,moist,alt,canSpawnSettlement:true})
+                terrainMap[x][y] = new Tile({id,x,y,tileId:"beach", temp,moist,alt})
                 possibleSettlementSpawns.push({x,y})
             }
             // lo demas, pero no muuuy alto -> diferentes biomas
             else if(Utils.between(alt, 0.4, 0.7)){
                 // plains
                 if(moist <= 0.8 && Utils.between(temp,0.1,0.5) || moist <= 0.7 && Utils.between(temp,0.5,0.7)){
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:true})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt})
                     possibleSettlementSpawns.push({x,y})
                 // forest
                 }else if(Utils.between(moist, 0.8,0.9) && Utils.between(temp,0.1,0.5)){
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"forest", temp,moist,alt,canSpawnSettlement:true})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"forest", temp,moist,alt})
                     possibleSettlementSpawns.push({x,y})
                 }
                 // jungle
                 else if (Utils.between(moist,0.7,0.9) && Utils.between(temp,0.5,1)){
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"jungle", temp,moist,alt,canSpawnSettlement:true})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"jungle", temp,moist,alt})
                     possibleSettlementSpawns.push({x,y})
                 }
                 // desert
                 else if ((moist <= 0.7 && temp >= 0.7)){
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"desert", temp,moist,alt,canSpawnSettlement:true})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"desert", temp,moist,alt})
                     possibleSettlementSpawns.push({x,y})
                 }
                 // oasis
                 else if((moist >= 0.9 && temp >= 0.7)){
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"oasis", temp,moist,alt,canSpawnSettlement:false})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"oasis", temp,moist,alt})
                 }
                 // water (lakes,rivers)
                 else if (moist >= 0.9 && temp >= 0.1){
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"lake", temp,moist,alt,canSpawnSettlement:false})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"lake", temp,moist,alt})
                 }else{
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:false})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt})
                 }
             }
             // arriba de todo montañas y nieve
             else{
-                if(alt > 0.925 && temp < 0.2) terrainMap[x][y] = new Tile({id,x,y,biome:"snow", temp,moist,alt,canSpawnSettlement:false})
-                else if(alt > 0.9) terrainMap[x][y] = new Tile({id,x,y,biome:"highMountain", temp,moist,alt,canSpawnSettlement:false})
-                else if(alt > 0.8) terrainMap[x][y] = new Tile({id,x,y,biome:"midMountain", temp,moist,alt,canSpawnSettlement:false})
+                if(alt > 0.925 && temp < 0.2) terrainMap[x][y] = new Tile({id,x,y,tileId:"snow", temp,moist,alt})
+                else if(alt > 0.9) terrainMap[x][y] = new Tile({id,x,y,tileId:"highMountain", temp,moist,alt})
+                else if(alt > 0.8) terrainMap[x][y] = new Tile({id,x,y,tileId:"midMountain", temp,moist,alt})
                 else if(alt > 0.7){
-                    terrainMap[x][y] = new Tile({id,x,y,biome:"lowMountain", temp,moist,alt,canSpawnSettlement:true})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"lowMountain", temp,moist,alt})
                     possibleSettlementSpawns.push({x,y})
                 }
-                else terrainMap[x][y] = new Tile({id,x,y,biome:"plains", temp,moist,alt,canSpawnSettlement:false})
+                else terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt})
             }
         }
     }
@@ -198,11 +198,11 @@ function placeRandomSettlements(){
     MAP[x][y].settlement = true
     MAP[x][y].settlementId = idCounter
     idCounter++
-    settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y, MAP))
+    settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y))
 
     for(let i = 0; i < qty-1; i++){
         let found = false
-        while(found === false && safeCounter <= 1000){
+        while(found === false && safeCounter <= 1000){  // pick random position -> check distances with all other settlements
             
             distances = []
             randomIndex = Math.floor(random()*possibleSettlementSpawns.length)
@@ -215,14 +215,15 @@ function placeRandomSettlements(){
                 let yy = settlements[j].y
                 distances.push(Utils.distance(x,y,xx,yy))
             }
-            if(distances.filter( dist => dist < CONFIGS.settlementMinDistance).length == 0) found = true
+            const minDistBetween = Math.floor(MAP.length / (qty/5))
+            if(distances.filter( dist => dist < minDistBetween).length == 0) found = true
             safeCounter++
         }
         if(found === true){
             MAP[x][y].settlement = true
             MAP[x][y].settlementId = idCounter
             idCounter++
-            settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y, MAP)) 
+            settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y)) 
         }
     }
 
@@ -275,16 +276,14 @@ function connectSettlements(random){
             } 
             
          }
-         if(random() > 0.5){
-            if(farthestSettlement !== null){
-                newPath = FindPath(settlement,farthestSettlement,map)
-                if(newPath !== undefined  && newPath.length >1){
-                    paths.push(newPath)
-                    settlement.isConnected = true
-                    farthestSettlement.isConnected = true
-                }
-             }
-         }
+        /* if(farthestSettlement !== null){
+            newPath = FindPath(settlement,farthestSettlement,map)
+            if(newPath !== undefined  && newPath.length >1){
+                paths.push(newPath)
+                settlement.isConnected = true
+                farthestSettlement.isConnected = true
+            }
+        } */
     }
 
     return paths

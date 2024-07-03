@@ -1,4 +1,5 @@
 import CONFIGS from "../CONFIGS.js";
+import TILES from "../TILES.js";
 import Tile from "./Tile.js";
 
 export default class Map{
@@ -26,17 +27,13 @@ export default class Map{
                 this.tiles = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
                 for(let x = 0; x < this.cols; x++){
                     for(let y = 0; y < this.rows; y++){
-                        const {id,biome,temp,moist,alt,canSpawnSettlement} = data.map[x][y]
-                        this.tiles[x][y] = new Tile({id,x,y,biome,temp,moist,alt,canSpawnSettlement})
+                        const {id,tileId,temp,moist,alt} = data.map[x][y]
+                        this.tiles[x][y] = new Tile({id,x,y,tileId,temp,moist,alt})
                     }
                 }
                 this.seeds = data.seeds
                 
                 // update UI
-                document.getElementById('map-seed-info').innerText = seed
-                document.getElementById('alt-seed-info').innerText = data.seeds.altitude
-                document.getElementById('moist-seed-info').innerText = data.seeds.moisture
-                document.getElementById('temp-seed-info').innerText = data.seeds.temperature
                 document.getElementById("progress").innerHTML = "0%"
                 document.getElementById("progressTxt").innerHTML = "Connecting Settlements"
 
@@ -54,7 +51,7 @@ export default class Map{
 
                 // change tiles to settlements
                 this.settlements.forEach( ({x,y}) => {
-                    this.tiles[x][y].changeTile("settlement")
+                    this.placeSettlementOnMap(x,y,this.tiles)
                 })
 
                 document.getElementById("progressTxt").innerHTML = "Done"
@@ -63,6 +60,19 @@ export default class Map{
             }
             else if (data.txt === "progress") {
                 document.getElementById("progress").innerText = data.progress +"%"
+            }
+        }
+    }
+
+    placeSettlementOnMap(x,y,map){
+        for(let i = -2; i <= 2; i++){
+            for(let j = -2; j <= 2; j++){
+                if(x+i >= 0 && x+i <= this.cols-1 && y+j >= 0 && y+j <= this.rows-1){
+                    map[x+i][y+j].changeTile("settlement")
+                    const {tileMap} = TILES["settlement"]
+                    const {offset,size} = TILES["settlement"].character[0]
+                    map[x+i][y+j].character = {value: tileMap[j+2][i+2], offset, size}
+                }
             }
         }
     }

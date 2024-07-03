@@ -85,12 +85,7 @@ export default function FindPath(start,end,originalMap){
                     // prioriza caminos con temp media y baja alt y humedad
                     if(currentNeighbor.temp < 0.4 || currentNeighbor.temp > 0.5 ||
                         currentNeighbor.moist > 0.5 || currentNeighbor.alt > 0.5){
-                            // si es montaña aun menos prioridad
-                            if(currentNeighbor.biome === "midMountain"){
-                                currentNeighbor.h = tempH*5
-                            }else{
-                                currentNeighbor.h = tempH*2
-                            }
+                            currentNeighbor.h = tempH*2
                     }else{
                         currentNeighbor.h = tempH
                     }
@@ -120,8 +115,8 @@ function checkAvailability(tile){
     let result = true
     const { canHaveRoad, resource } = tile
     if( !canHaveRoad ||
-       resource?.name === "trees" ||
-       resource?.name === "rocks" ){
+       resource?.biome === "trees" ||
+       resource?.biome === "rocks" ){
 
             result = false
         }

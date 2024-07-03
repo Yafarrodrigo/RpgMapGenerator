@@ -1,9 +1,9 @@
 const TILES = {
     plains: {
-        id: "plains",
-        name: "plains",
+        biome: "plains",
         canWalk: true,
         canHaveRoad: true,
+        canSpawnSettlement: true,
         resources: [
             {name: "rocks",weight: 1,color: "gray", character:"r"},
             {name: "trees",weight: 2,color: "brown", character:"t"},
@@ -20,10 +20,10 @@ const TILES = {
         ]
     },
     forest: {
-        id: "forest",
-        name: "forest",
+        biome: "forest",
         canWalk: true,
         canHaveRoad: true,
+        canSpawnSettlement: true,
         resources: [
             {name: "pebbles",weight: 1,color: "gray", character:"p"},
             {name: "trees",weight: 8,color: "brown", character:"t"},
@@ -40,10 +40,10 @@ const TILES = {
         ]
     },
     jungle: {
-        id: "jungle",
-        name: "jungle",
+        biome: "jungle",
         canWalk: true,
         canHaveRoad: true,
+        canSpawnSettlement: true,
         resources: [
             {name: "pebbles",weight: 1,color: "gray", character:"p"},
             {name: "trees",weight: 7,color: "brown", character:"t"},
@@ -60,10 +60,10 @@ const TILES = {
         ]
     },
     beach: {
-        id: "beach",
-        name: "beach",
+        biome: "beach",
         canWalk: true,
         canHaveRoad: true,
+        canSpawnSettlement: true,
         resources: [
             {name: "rocks",weight: 7,color: "gray", character:"r"},
             {name:"bushes",weight: 3,color: "lightgreen", character:"b"}
@@ -75,10 +75,10 @@ const TILES = {
         ]
     },
     desert: {
-        id: "desert",
-        name: "desert",
+        biome: "desert",
         canWalk: true,
         canHaveRoad: true,
+        canSpawnSettlement: true,
         resources: [
             {name: "rocks",weight: 6,color: "gray", character:"r"},
             {name: "pebbles",weight: 4,color: "gray", character:"p"},
@@ -90,10 +90,10 @@ const TILES = {
         ]
     },
     lowMountain: {
-        id: "lowMountain",
-        name: "lowMountain",
+        biome: "lowMountain",
         canWalk: true,
         canHaveRoad: true,
+        canSpawnSettlement: false,
         resources: [
             {name: "rocks",weight: 6,color: "gray", character:"r"},
             {name: "pebbles",weight: 3,color: "gray", character:"p"},
@@ -105,32 +105,32 @@ const TILES = {
         ]
     },
     midMountain: {
-        id: "midMountain",
-        name: "midMountain",
-        canWalk: true,
-        canHaveRoad: true,
+        biome: "midMountain",
+        canWalk: false,
+        canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "#82673e",
         character: [
-            {value:"˄",offset: {x:0,y:0},size: 25}
+            {value:"Δ",offset: {x:0,y:0},size: 25}
         ]
     },
     highMountain: {
-        id: "highMountain",
-        name: "highMountain",
+        biome: "highMountain",
         canWalk: false,
         canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "#66442b",
         character: [
-            {value:"Δ",offset: {x:0,y:0},size: 20}
+            {value:"⩕",offset: {x:0,y:0},size: 20}
         ]
     },
     deepWater: {
-        id: "deepWater",
-        name: "deepWater",
+        biome: "deepWater",
         canWalk: false,
         canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "#3C96AA",
         character: [
@@ -138,10 +138,10 @@ const TILES = {
         ]
     },
     water: {
-        id: "water",
-        name: "water",
+        biome: "water",
         canWalk: true,
         canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "#5AAFB9",
         character: [
@@ -149,10 +149,10 @@ const TILES = {
         ]
     },
     lake: {
-        id: "lake",
-        name: "lake",
+        biome: "lake",
         canWalk: false,
         canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "#5AAFB9",
         character: [
@@ -160,10 +160,10 @@ const TILES = {
         ]
     },
     oasis: {
-        id: "oasis",
-        name: "oasis",
+        biome: "oasis",
         canWalk: true,
         canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "#5AAFB9",
         character: [
@@ -171,10 +171,10 @@ const TILES = {
         ]
     },
     snow: {
-        id: "snow",
-        name: "snow",
+        biome: "snow",
         canWalk: false,
         canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "#D7EBEB",
         character: [
@@ -182,23 +182,28 @@ const TILES = {
         ]
     },
     road: {
-        id: "road",
-        name: "road",
+        biome: "road",
         canWalk: true,
         canHaveRoad: true,
+        canSpawnSettlement: false,
         resources: [],
         //color: "#848a4e",
         color: "red",
         character: [{value:"r",offset: {x:0,y:0},size: 20}]
     },
     settlement: {
-        id: "settlement",
-        name: "settlement",
+        biome: "settlement",
         canWalk: false,
         canHaveRoad: false,
+        canSpawnSettlement: false,
         resources: [],
         color: "magenta",
-        character: [{value:"s",offset: {x:0,y:0},size: 20}]
+        character: [{value:"s",offset: {x:0,y:0},size: 20}],
+        tileMap: [["╔","═","═","═","╗"],
+                  ["║"," "," "," ","║"],
+                  ["║"," ","⏏"," ","║"],
+                  ["║"," "," "," ","║"],
+                  ["╚","═","═","═","╝"]]
     }
 }
 

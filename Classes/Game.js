@@ -18,14 +18,6 @@ export default class Game{
         this.cameraOffsetX = CONFIGS.camStartOffsetX
         this.cameraOffsetY = CONFIGS.camStartOffsetY
 
-        this.DEBUG = {
-            showNoise: "none", // "altitude", "moisture", "temperature"
-            showRoads: false,
-            showResources: false
-        }
-
-        this.setupDebug(seed)
-
         this.clock = null
     }
 
@@ -33,39 +25,6 @@ export default class Game{
         this.clock = setInterval(()=>{
             this.update()
         },32)
-    }
-
-    setupDebug(seed){
-        document.getElementById('new-map-button').addEventListener('click', (e) => {
-            if(!this.map.genAvailable) return
-            this.map.genAvailable = false
-
-            e.preventDefault();
-            const newSeed = Math.random()*9999
-            const randomNumberenerator = mulberry32(newSeed*9999)
-            this.random = randomNumberenerator
-            this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, newSeed)
-        })
-
-        this.updateSeedsDisplay(seed)
-        document.querySelectorAll("input[name='show-noise']").forEach( option => {
-            option.addEventListener("click", (e) => {
-                this.DEBUG.showNoise = e.target.value
-            })
-        })
-        document.getElementById('debug-resources').addEventListener("click", (e) => {
-            this.DEBUG.showResources = e.target.checked
-        })
-        document.getElementById('debug-roads').addEventListener("click", (e) => {
-            this.DEBUG.showRoads = e.target.checked
-        })
-    }
-
-    updateSeedsDisplay(seed){
-        document.getElementById('map-seed-info').innerText = seed
-        document.getElementById('alt-seed-info').innerText = this.map.seeds.altitude
-        document.getElementById('moist-seed-info').innerText = this.map.seeds.moisture
-        document.getElementById('temp-seed-info').innerText = this.map.seeds.temperature
     }
 
     update(){
@@ -106,7 +65,7 @@ export default class Game{
         
         if(this.map.tiles.length > 0){
             viewport.updateViewport(this.cameraOffsetX,this.cameraOffsetY)
-            this.graphics.update(this.map,this.DEBUG)
+            this.graphics.update(this.map)
         }
     }
 }
