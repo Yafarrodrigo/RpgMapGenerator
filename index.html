@@ -9,8 +9,34 @@
     <script type="module" src="index.js"></script>
 </head>
 <body>
-    <canvas height="1" width="1"></canvas>
+
     <h1 id="progressTxt" style="position: absolute; left: 500px; top: 25px; color: RED;">Generating Terrain</h1>
     <h1 id="progress" style="position: absolute; left: 500px; top: 50px; color: RED;">0%</h1>
+    <div id="gameContainer">
+        <div id="displayContainer">
+            <canvas height="1" width="1"></canvas>
+            <div id="logContainer">
+                <div id="log">
+                    <div class="logMsg yellow">pegaste 2 :P</div>
+                    <div class="logMsg yellow">pegaste 3 :P</div>
+                    <div class="logMsg gray">No Pegaste!</div>
+                    <div class="logMsg magenta">Ganaste 2xp</div>
+                    <div class="logMsg magenta">Level up!</div>
+                    <div class="logMsg green">Te curaste 10!</div>
+                    <div class="logMsg red">Te pegaron 50!</div>
+                    <div class="logMsg red">Te pegaron 1!</div>
+                    <div class="logMsg red">Te stunearon :P</div>
+                </div>
+            </div>
+        </div>
+        <div id="sidebarContainer">
+            <div id="sidebar">
+                <div>a - Attack</div>
+                <div>s - Skill / Spell</div>
+                <div>i - Item</div>
+                <div>l - Look</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -15,6 +15,8 @@ export default class Game{
         this.graphics = new Graphics(this.map)
         this.controls = new Controls(this)
 
+        this.player = {x:40,y:40, character:{value:"@", color: "magenta",offset: {x:0,y:0},size: 30}}
+
         this.cameraOffsetX = CONFIGS.camStartOffsetX
         this.cameraOffsetY = CONFIGS.camStartOffsetY
 
@@ -65,7 +67,7 @@ export default class Game{
         
         if(this.map.tiles.length > 0){
             viewport.updateViewport(this.cameraOffsetX,this.cameraOffsetY)
-            this.graphics.update(this.map)
+            this.graphics.update(this.player, this.map)
         }
     }
 }

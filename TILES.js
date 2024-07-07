@@ -6,8 +6,8 @@ const TILES = {
         canSpawnSettlement: true,
         resources: [
             {name: "rocks",weight: 1,color: "gray", character:"r"},
-            {name: "trees",weight: 2,color: "brown", character:"t"},
-            {name: "bushes",weight: 7,color: "lightgreen", character:"b"}
+            {name: "trees",weight: 1,color: "brown", character:"t"},
+            {name: "bushes",weight: 8,color: "lightgreen", character:"b"}
         ],
         color: "#96C869",
         character: [

@@ -57,7 +57,6 @@ export default class Map{
                 document.getElementById("progressTxt").innerHTML = "Done"
                 document.getElementById("progress").innerHTML = ""
                 this.genAvailable = true
-                console.log(this.tiles);
             }
             else if (data.txt === "progress") {
                 document.getElementById("progress").innerText = data.progress +"%"

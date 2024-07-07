@@ -51,6 +51,6 @@ export default class Tile{
     }
 
     getRandomResource(tileId){
-        return Math.random() > 0.75 ? Utils.weightedRandom(TILES[tileId].resources) : null
+        return Math.random() > 0.85 ? Utils.weightedRandom(TILES[tileId].resources) : null
     }
 }

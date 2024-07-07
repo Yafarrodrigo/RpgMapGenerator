@@ -6,15 +6,15 @@ export default class Graphics{
         this.canvas = document.querySelector('canvas')
         this.ctx = this.canvas.getContext('2d', {alpha: false})
 
-        this.canvas.height = CONFIGS.canvasWidth
-        this.canvas.width = CONFIGS.canvasHeight
+        this.canvas.height = document.getElementById('displayContainer').offsetHeight //CONFIGS.canvasHeight
+        this.canvas.width = document.getElementById('displayContainer').offsetWidth //CONFIGS.canvasWidth
         
         this.viewTileSize = CONFIGS.viewTileSize
         
         this.viewport = new Viewport(this.canvas.width,this.canvas.height,map.rows,map.cols,this.viewTileSize)
     }
 
-    drawASCIIViewport(map){
+    drawASCIIViewport(map, player){
         const {offset} = this.viewport
         for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
             for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
@@ -23,14 +23,29 @@ export default class Graphics{
                 const finalX = tile.x+offset.x
                 const finalY = tile.y+offset.y
 
-                this.drawASCII(finalX,finalY,tile)
+                if(x === player.x && y === player.y){
+                    this.drawPlayer(player)
+                }else{
+                    this.drawASCII(finalX,finalY,tile)
+                }
             }
         }
     }
 
+    drawPlayer(player){
+        const {offset} = this.viewport
+        this.ctx.font = `${player.character.size}pt Monospace`
+        this.ctx.fillStyle = player.character.color
+        this.ctx.fillText(
+            player.character.value,
+            ((player.x + offset.x) * this.viewTileSize) + player.character.offset.x + CONFIGS.defaultCharactersOffset.x,
+            ((player.y + offset.y) * this.viewTileSize) + player.character.offset.y + CONFIGS.defaultCharactersOffset.y
+        )
+    }
+
     drawASCII(x,y,tile){
         
-        this.ctx.font = `${tile.character.size}pt Helvetica`
+        this.ctx.font = `${tile.character.size}pt Monospace`
         if(tile.resource === null){
             this.ctx.fillStyle = tile.color
             if(tile.isRoad){
@@ -44,14 +59,14 @@ export default class Graphics{
             }
         }
         else{
-            this.ctx.font = `15pt Helvetica`
+            this.ctx.font = `15pt Monospace`
             this.ctx.fillStyle = tile.resource.color
-            this.ctx.fillText(tile.resource.character ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
+            this.ctx.fillText(tile.resource.character ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x + 10, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
         }
     }
 
-    update(map){
+    update(player,map){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
-        this.drawASCIIViewport(map)
+        this.drawASCIIViewport(map, player)
     }
 }

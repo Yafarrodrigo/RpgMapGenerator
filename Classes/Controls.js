@@ -1,3 +1,5 @@
+import CONFIGS from "../CONFIGS.js"
+
 export default class Controls{
     constructor(game){
         this.UP = false
@@ -9,7 +11,7 @@ export default class Controls{
     }
 
     createListeners(game){
-        let wheelTicking = false
+        /* let wheelTicking = false
         document.addEventListener("wheel", (e) => {
         if (!wheelTicking) {
             window.requestAnimationFrame(() => {
@@ -24,8 +26,11 @@ export default class Controls{
             });
         }
         wheelTicking = true;
-        });
+        }); */
 
+        /* window.addEventListener('resize', e => {
+            const  width = document.getElementById('displayContainer').offsetWidth
+        }) */
 
         document.addEventListener('keydown', (e) => {
             switch(e.key){

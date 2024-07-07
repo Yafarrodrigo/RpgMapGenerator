@@ -1,6 +1,6 @@
 const CONFIGS = {
-    canvasWidth: 750,
-    canvasHeight: 1200,
+    canvasWidth: 1500,
+    canvasHeight: 800,
     mapWidth: 1000,
     mapHeight: 1000,
     mapTileSize: 5,
@@ -32,8 +32,8 @@ const CONFIGS = {
     qtySettlements: 10,
     settlementMinDistance: 100,
     
-    defaultCharactersOffset: {x:0,y:15},   // {x:10,y:25}
-    viewTileSize: 15,                       // viewTileSize: 35
+    defaultCharactersOffset: {x:10,y:25},   // {x:0,y:15}
+    viewTileSize: 35,                       // viewTileSize: 35
     camStartOffsetX: 40,
     camStartOffsetY: 40,
 
