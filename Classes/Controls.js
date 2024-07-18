@@ -7,6 +7,11 @@ export default class Controls{
         this.LEFT = false
         this.RIGHT = false
 
+        this.moveUP = false
+        this.moveDOWN = false
+        this.moveLEFT = false
+        this.moveRIGHT = false
+
         this.createListeners(game)
     }
 
@@ -28,58 +33,42 @@ export default class Controls{
         wheelTicking = true;
         }); */
 
-        /* window.addEventListener('resize', e => {
-            const  width = document.getElementById('displayContainer').offsetWidth
-        }) */
-
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', function(e){
             switch(e.key){
                 case "a":
                 case "A":
-                case "ArrowLeft":
                     this.LEFT = true
                     break;
                 case "d":
                 case "D":
-                case "ArrowRight":
                     this.RIGHT = true
                     break;
                 case "w":
                 case "W":
-                case "ArrowUp":
                     this.UP = true
                     break;
                 case "s":
                 case "S":
-                case "ArrowDown":
                     this.DOWN = true
+                    break;
+                case "ArrowLeft":
+                    game.movePlayer("left")
+                    game.update()
+                    break;
+                case "ArrowRight":
+                    game.movePlayer("right")
+                    game.update()
+                    break;
+                case "ArrowUp":
+                    game.movePlayer("up")
+                    game.update()
+                    break;
+                case "ArrowDown":
+                    game.movePlayer("down")
+                    game.update()
                     break;
             }
         })
 
-        document.addEventListener('keyup', (e) => {
-            switch(e.key){
-                case "a":
-                case "A":
-                case "ArrowLeft":
-                    this.LEFT = false
-                    break;
-                case "d":
-                case "D":
-                case "ArrowRight":
-                    this.RIGHT = false
-                    break;
-                case "w":
-                case "W":
-                case "ArrowUp":
-                    this.UP = false
-                    break;
-                case "s":
-                case "S":
-                case "ArrowDown":
-                    this.DOWN = false
-                    break;
-            }
-        })
     }
 }

@@ -14,7 +14,7 @@ export default class Graphics{
         this.viewport = new Viewport(this.canvas.width,this.canvas.height,map.rows,map.cols,this.viewTileSize)
     }
 
-    drawASCIIViewport(map, player){
+    drawASCIIViewport(map, player,scale){
         const {offset} = this.viewport
         for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
             for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
@@ -24,17 +24,17 @@ export default class Graphics{
                 const finalY = tile.y+offset.y
 
                 if(x === player.x && y === player.y){
-                    this.drawPlayer(player)
+                    this.drawPlayer(player, scale)
                 }else{
-                    this.drawASCII(finalX,finalY,tile)
+                    this.drawASCII(finalX,finalY,tile, scale)
                 }
             }
         }
     }
 
-    drawPlayer(player){
+    drawPlayer(player, scale){
         const {offset} = this.viewport
-        this.ctx.font = `${player.character.size}pt Monospace`
+        this.ctx.font = `${player.character.size * scale}pt Monospace`
         this.ctx.fillStyle = player.character.color
         this.ctx.fillText(
             player.character.value,
@@ -43,9 +43,9 @@ export default class Graphics{
         )
     }
 
-    drawASCII(x,y,tile){
+    drawASCII(x,y,tile, scale){
         
-        this.ctx.font = `${tile.character.size}pt Monospace`
+        this.ctx.font = `${tile.character.size * scale}pt Monospace`
         if(tile.resource === null){
             this.ctx.fillStyle = tile.color
             if(tile.isRoad){
@@ -60,6 +60,7 @@ export default class Graphics{
         }
         else{
             this.ctx.font = `15pt Monospace`
+            this.ctx.font = `${15 * scale}pt Monospace`
             this.ctx.fillStyle = tile.resource.color
             this.ctx.fillText(tile.resource.character ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x + 10, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
         }
@@ -67,6 +68,6 @@ export default class Graphics{
 
     update(player,map){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
-        this.drawASCIIViewport(map, player)
+        this.drawASCIIViewport(map, player, 1.1)   
     }
 }

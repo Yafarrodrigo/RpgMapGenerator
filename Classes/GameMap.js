@@ -3,7 +3,7 @@ import TILES from "../TILES.js";
 import Tile from "./Tile.js";
 
 export default class Map{
-    constructor(width, height, randomGen, seed){
+    constructor(game,width, height, randomGen, seed){
         this.width = width
         this.height = height
         this.tileSize = CONFIGS.mapTileSize
@@ -57,6 +57,7 @@ export default class Map{
                 document.getElementById("progressTxt").innerHTML = "Done"
                 document.getElementById("progress").innerHTML = ""
                 this.genAvailable = true
+                game.setupPlayer()
             }
             else if (data.txt === "progress") {
                 document.getElementById("progress").innerText = data.progress +"%"
@@ -64,6 +65,16 @@ export default class Map{
 
         }
 
+    }
+
+    getTileAt(x,y){
+        return this.tiles[x][y]
+    }
+
+    getRandomTile(){
+        const randomX = Math.floor(Math.random()*this.cols)
+        const randomY = Math.floor(Math.random()*this.rows)
+        return this.tiles[randomX][randomY];
     }
 
     placeSettlementOnMap(x,y,map){

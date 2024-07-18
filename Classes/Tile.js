@@ -20,13 +20,20 @@ export default class Tile{
         this.biome = TILES[tileId].biome
         this.isSettlement = false
         this.canSpawnSettlement = TILES[tileId].canSpawnSettlement
+        this.canPlayerSpawn = TILES[tileId].canSpawnSettlement
         this.canWalk = TILES[tileId].canWalk
-        this.canHaveRoad = TILES[tileId].canHaveRoad
+        this.canHaveRoad = false
         this.isRoad = false
         this.character = {...TILES[tileId].character[Math.floor(Math.random()*TILES[tileId].character.length)]}
         this.color = TILES[tileId].color
 
         this.resource = this.getRandomResource(tileId)
+        if(this.resource !== null){
+            this.canPlayerSpawn = false
+            if(this.resource.name === "trees" || this.resource.name === "rocks"){
+                this.canWalk = false
+            }
+        }
     }
 
     changeTile(tileId){
@@ -38,11 +45,13 @@ export default class Tile{
             this.resource = null
             this.isSettlement = false
             this.isRoad = true
+            this.canPlayerSpawn = true
         }else if(newTile.biome === "settlement"){
             this.resource = null
             this.character = null
             this.isSettlement = true
             this.isRoad = false
+            this.canPlayerSpawn = false
         }else{
             this.biome = newTile.biome
             this.resource = this.getRandomResource(tileId)

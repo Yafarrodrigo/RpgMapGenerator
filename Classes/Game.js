@@ -11,11 +11,11 @@ export default class Game{
         }
         const randomNumberenerator = mulberry32(seed*9999)
         this.random =randomNumberenerator
-        this.map = new GameMap(CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
+        this.map = new GameMap(this,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
         this.graphics = new Graphics(this.map)
         this.controls = new Controls(this)
 
-        this.player = {x:40,y:40, character:{value:"@", color: "magenta",offset: {x:0,y:0},size: 30}}
+        this.player = null
 
         this.cameraOffsetX = CONFIGS.camStartOffsetX
         this.cameraOffsetY = CONFIGS.camStartOffsetY
@@ -29,45 +29,61 @@ export default class Game{
         },32)
     }
 
+    stop(){
+        clearInterval(this.clock)
+        this.clock = null
+    }
+
+    setupPlayer(){
+        const {x,y} = this.selectPlayerStartLocation()
+        this.player = {x,y, character:{value:"@", color: "magenta",offset: {x:0,y:0},size: 30}}
+    }
+
+    selectPlayerStartLocation(){
+        let current = this.map.getRandomTile()
+        while( current.canPlayerSpawn === false ){
+            current = this.map.getRandomTile()
+        }
+        return {x:current.x,y:current.y}
+    }
+
+    movePlayer(dir){
+        if(dir === "up"){
+            if(this.player.y - 1 < 0) return
+            const topTile = this.map.getTileAt(this.player.x,this.player.y - 1)
+            if(topTile.canWalk){
+                this.player.y -= 1
+            }
+        }
+        else if(dir === "down"){
+            if(this.player.y + 1 >= this.map.rows ) return
+            const bottomTile = this.map.getTileAt(this.player.x,this.player.y + 1)
+            if(bottomTile.canWalk){
+                this.player.y += 1
+            }
+        }
+        else if(dir === "left"){
+            if(this.player.x - 1 < 0 ) return
+            const leftTile = this.map.getTileAt(this.player.x - 1,this.player.y)
+            if(leftTile.canWalk){
+                this.player.x -= 1
+            }
+        }
+        else if(dir === "right"){
+            if(this.player.x + 1 >= this.map.cols ) return
+            const rightTile = this.map.getTileAt(this.player.x + 1,this.player.y)
+            if(rightTile.canWalk){
+                this.player.x += 1
+            }
+        }
+    }
+
     update(){
-        const {UP,DOWN,LEFT,RIGHT} = this.controls
         const { viewport } = this.graphics
-        if(LEFT){
-            if(viewport.velocity.x - viewport.acc >= -viewport.maxVelocity){
-                viewport.velocity.x -= viewport.acc
-            }
-        }
-        else if(RIGHT){
-            if(viewport.velocity.x + viewport.acc <= viewport.maxVelocity){
-                viewport.velocity.x += viewport.acc
-            }
-        }
-        else{
-            if(viewport.velocity.x > 0) viewport.velocity.x -= viewport.acc
-            else if(viewport.velocity.x < 0) viewport.velocity.x += viewport.acc
-        }
-        if(UP){
-            if(viewport.velocity.y - viewport.acc >= -viewport.maxVelocity){
-                viewport.velocity.y -= viewport.acc
-            }
-        }
-        else if(DOWN){
-            if(viewport.velocity.y + viewport.acc <= viewport.maxVelocity){
-                viewport.velocity.y += viewport.acc
-            }
-        }
-        else{
-            if(viewport.velocity.y > 0) viewport.velocity.y -= viewport.acc
-            else if(viewport.velocity.y < 0) viewport.velocity.y += viewport.acc
-        }
-    
-        this.cameraOffsetX += viewport.velocity.x
-        this.cameraOffsetY += viewport.velocity.y
-    
-        
-        if(this.map.tiles.length > 0){
-            viewport.updateViewport(this.cameraOffsetX,this.cameraOffsetY)
+        if(this.map.tiles.length > 0 && this.player){
+            if(this.player) viewport.updateViewport(this.player.x,this.player.y)
             this.graphics.update(this.player, this.map)
+            this.stop()
         }
     }
 }
