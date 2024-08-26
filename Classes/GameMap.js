@@ -42,7 +42,7 @@ export default class Map{
             else if(data.txt === "finished settlements"){
                 this.settlements = data.settlements.filter( set => set.isConnected)
                 document.getElementById("progress").innerHTML = "100%"
-
+                
                 // change tiles to roads
                 this.paths = data.roads
                 this.paths.forEach( path => path.forEach( ({x,y}) => {

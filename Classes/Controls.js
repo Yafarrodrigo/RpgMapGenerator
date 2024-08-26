@@ -12,6 +12,9 @@ export default class Controls{
         this.moveLEFT = false
         this.moveRIGHT = false
 
+        this.cursorAt = {x:0,y:0}
+        this.tileSelected = {x:0,y:0}
+
         this.createListeners(game)
     }
 

@@ -32,8 +32,9 @@ const CONFIGS = {
     qtySettlements: 10,
     settlementMinDistance: 100,
     
-    defaultCharactersOffset: {x:10,y:25},   // {x:0,y:15}
-    viewTileSize: 35,                       // viewTileSize: 35
+    defaultCharactersOffset: {x:5,y:5},   // {x:10,y:25}
+    viewTileSize: 5,                        // viewTileSize: 35
+    tileScale: 0.5,                         // tileScale: 1.1
     camStartOffsetX: 40,
     camStartOffsetY: 40,
 

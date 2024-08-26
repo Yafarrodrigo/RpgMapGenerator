@@ -68,6 +68,6 @@ export default class Graphics{
 
     update(player,map){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
-        this.drawASCIIViewport(map, player, 1.1)   
+        this.drawASCIIViewport(map, player, 0.5)   
     }
 }

@@ -33,10 +33,10 @@ onmessage = function({data}) {
         mapValues.settlements = settlements
 
         console.time("roads")
-        const roads = connectSettlements(random)
+        const {paths,connectedSettlements} = connectSettlements(mapValues.settlements)
         console.timeEnd("roads")
 
-        postMessage({txt:"finished settlements", settlements, roads})
+        postMessage({txt:"finished settlements", settlements:connectedSettlements, roads:paths})
     }
     working = false
 }
@@ -223,15 +223,14 @@ function placeRandomSettlements(){
             MAP[x][y].isSettlement = true
             MAP[x][y].settlementId = idCounter
             idCounter++
-            settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y)) 
+            settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y))
         }
     }
 
     return {settlements,MAP}
 }
 
-function connectSettlements(random){
-    const settlements = mapValues.settlements
+function connectSettlements(settlements){
     const map = mapValues.terrainMap
     const paths = []
     let nearestSettlement = null
@@ -276,15 +275,15 @@ function connectSettlements(random){
             } 
             
          }
-        /* if(farthestSettlement !== null){
+        if(farthestSettlement !== null){
             newPath = FindPath(settlement,farthestSettlement,map)
             if(newPath !== undefined  && newPath.length >1){
                 paths.push(newPath)
                 settlement.isConnected = true
                 farthestSettlement.isConnected = true
             }
-        } */
+        }
     }
 
-    return paths
+    return {paths, connectedSettlements: settlements}
 }

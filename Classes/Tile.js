@@ -22,7 +22,7 @@ export default class Tile{
         this.canSpawnSettlement = TILES[tileId].canSpawnSettlement
         this.canPlayerSpawn = TILES[tileId].canSpawnSettlement
         this.canWalk = TILES[tileId].canWalk
-        this.canHaveRoad = false
+        this.canHaveRoad = TILES[tileId].canHaveRoad
         this.isRoad = false
         this.character = {...TILES[tileId].character[Math.floor(Math.random()*TILES[tileId].character.length)]}
         this.color = TILES[tileId].color

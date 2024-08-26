@@ -188,7 +188,7 @@ const TILES = {
         canSpawnSettlement: false,
         resources: [],
         //color: "#848a4e",
-        color: "red",
+        color: "darkorange",
         character: [{value:"r",offset: {x:0,y:0},size: 20}]
     },
     settlement: {
