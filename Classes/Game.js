@@ -16,9 +16,7 @@ export default class Game{
         this.controls = new Controls(this)
 
         this.player = null
-
-        this.cameraOffsetX = CONFIGS.camStartOffsetX
-        this.cameraOffsetY = CONFIGS.camStartOffsetY
+        this.mode = "moving camera" // "moving player", "moving camera", "menu"
 
         this.clock = null
     }
@@ -33,6 +31,7 @@ export default class Game{
         clearInterval(this.clock)
         this.clock = null
     }
+
 
     setupPlayer(){
         const {x,y} = this.selectPlayerStartLocation()
@@ -82,7 +81,7 @@ export default class Game{
         const { viewport } = this.graphics
         if(this.map.tiles.length > 0 && this.player){
             if(this.player) viewport.updateViewport(this.player.x,this.player.y)
-            this.graphics.update(this.player, this.map)
+            this.graphics.update(this.mode, this.player, this.map)
             this.stop()
         }
     }

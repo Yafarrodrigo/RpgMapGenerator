@@ -1,6 +1,6 @@
 export default class Viewport{
 
-    constructor(w,h,rows,cols,tileSize){
+    constructor(w,h,rows,cols,tileSize,tileScale,charactersOffset){
         this.w = w
         this.h = h
         this.rows = rows
@@ -10,6 +10,8 @@ export default class Viewport{
         this.endTile = {x:0,y:0}
         this.offset = {x:0,y:0}
         this.viewTileSize = tileSize
+        this.tileScale = tileScale
+        this.charactersOffset = charactersOffset
         this.acc = 1
         this.velocity = {x:0,y:0}
         this.maxVelocity = 3

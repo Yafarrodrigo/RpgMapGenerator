@@ -19,25 +19,38 @@ export default class Controls{
     }
 
     createListeners(game){
-        /* let wheelTicking = false
-        document.addEventListener("wheel", (e) => {
-        if (!wheelTicking) {
-            window.requestAnimationFrame(() => {
-            if(e.wheelDeltaY < 0){
-                if(game.graphics.viewTileSize - 1 >= 5){
-                    game.graphics.viewTileSize -= 1
-                }
-            }else{
-                game.graphics.viewTileSize += 1
-            }
-            wheelTicking = false;
-            });
-        }
-        wheelTicking = true;
-        }); */
-
-        document.addEventListener('keydown', function(e){
+        document.addEventListener('keyup', function(e){
             switch(e.key){
+                case "a":
+                case "A":
+                    this.LEFT = false
+                    break;
+                case "d":
+                case "D":
+                    this.RIGHT = false
+                    break;
+                case "w":
+                case "W":
+                    this.UP = false
+                    break;
+                case "s":
+                case "S":
+                    this.DOWN = false
+                    break;
+            }
+        })
+        document.addEventListener('keydown', function(e){
+            if((e.key !== "m" && e.key !== "M") && game.mode === "moving camera") return
+            switch(e.key){
+                case "m":
+                case "M":
+                    if(game.mode === "moving camera"){
+                        game.mode = "moving player"
+                    }else{
+                        game.mode = "moving camera"
+                    }
+                    game.update()
+                    break;
                 case "a":
                 case "A":
                     this.LEFT = true
@@ -55,19 +68,27 @@ export default class Controls{
                     this.DOWN = true
                     break;
                 case "ArrowLeft":
-                    game.movePlayer("left")
+                    if(game.mode === "moving player"){
+                        game.movePlayer("left")
+                    }
                     game.update()
                     break;
                 case "ArrowRight":
-                    game.movePlayer("right")
+                    if(game.mode === "moving player"){
+                        game.movePlayer("right")
+                    }
                     game.update()
                     break;
                 case "ArrowUp":
-                    game.movePlayer("up")
+                    if(game.mode === "moving player"){
+                        game.movePlayer("up")
+                    }
                     game.update()
                     break;
                 case "ArrowDown":
-                    game.movePlayer("down")
+                    if(game.mode === "moving player"){
+                        game.movePlayer("down")
+                    }
                     game.update()
                     break;
             }

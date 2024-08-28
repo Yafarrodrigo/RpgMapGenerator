@@ -11,63 +11,76 @@ export default class Graphics{
         
         this.viewTileSize = CONFIGS.viewTileSize
         
-        this.viewport = new Viewport(this.canvas.width,this.canvas.height,map.rows,map.cols,this.viewTileSize)
+        this.viewport = new Viewport(this.canvas.width,this.canvas.height,map.rows,map.cols,CONFIGS.viewTileSize,CONFIGS.tileScale,CONFIGS.defaultCharactersOffset)
+        this.viewport2 = new Viewport(this.canvas.width,this.canvas.height,map.rows,map.cols,CONFIGS.cameraTileSize,CONFIGS.cameraTileScale,CONFIGS.cameraCharactersOffset)
+
+        this.currentCameraPosition = {x:Math.floor(map.cols/2),y:Math.floor(map.rows/2)}
+        this.viewport2.updateViewport(this.currentCameraPosition.x,this.currentCameraPosition.y)
     }
 
-    drawASCIIViewport(map, player,scale){
-        const {offset} = this.viewport
-        for(let x = this.viewport.startTile.x; x <= this.viewport.endTile.x; x++){
-            for(let y = this.viewport.startTile.y; y <= this.viewport.endTile.y; y++){
+    updateCameraPosition(x,y){
+        this.viewport2.updateViewport(x,y)
+    }
+
+    drawASCIIViewport(viewport, map, player){
+        const {offset} = viewport
+        for(let x = viewport.startTile.x; x <= viewport.endTile.x; x++){
+            for(let y = viewport.startTile.y; y <= viewport.endTile.y; y++){
                 const tile = map.tiles[x][y]
                 if(!tile) continue
                 const finalX = tile.x+offset.x
                 const finalY = tile.y+offset.y
 
                 if(x === player.x && y === player.y){
-                    this.drawPlayer(player, scale)
+                    this.drawPlayer(viewport,player)
                 }else{
-                    this.drawASCII(finalX,finalY,tile, scale)
+                    this.drawASCII(viewport,finalX,finalY,tile)
                 }
             }
         }
     }
 
-    drawPlayer(player, scale){
-        const {offset} = this.viewport
-        this.ctx.font = `${player.character.size * scale}pt Monospace`
+    drawPlayer(viewport, player){
+        const {offset, tileScale, charactersOffset, viewTileSize} = viewport
+        this.ctx.font = `${player.character.size * tileScale}pt Monospace`
         this.ctx.fillStyle = player.character.color
         this.ctx.fillText(
             player.character.value,
-            ((player.x + offset.x) * this.viewTileSize) + player.character.offset.x + CONFIGS.defaultCharactersOffset.x,
-            ((player.y + offset.y) * this.viewTileSize) + player.character.offset.y + CONFIGS.defaultCharactersOffset.y
+            ((player.x + offset.x) * viewTileSize) + player.character.offset.x + charactersOffset.x,
+            ((player.y + offset.y) * viewTileSize) + player.character.offset.y + charactersOffset.y
         )
     }
 
-    drawASCII(x,y,tile, scale){
-        
-        this.ctx.font = `${tile.character.size * scale}pt Monospace`
+    drawASCII(viewport,x,y,tile){
+        const {tileScale, charactersOffset, viewTileSize} = viewport
+        this.ctx.font = `${tile.character.size * tileScale}pt Monospace`
         if(tile.resource === null){
             this.ctx.fillStyle = tile.color
             if(tile.isRoad){
-                this.ctx.fillRect(x*this.viewTileSize,y*this.viewTileSize,this.viewTileSize,this.viewTileSize)
+                this.ctx.fillRect(x*viewTileSize,y*viewTileSize,viewTileSize,viewTileSize)
             }else{
                 this.ctx.fillText(
                     tile.character.value,
-                    x*this.viewTileSize + tile.character.offset.x + CONFIGS.defaultCharactersOffset.x,
-                    y*this.viewTileSize + tile.character.offset.y + CONFIGS.defaultCharactersOffset.y
+                    x*viewTileSize + tile.character.offset.x + charactersOffset.x,
+                    y*viewTileSize + tile.character.offset.y + charactersOffset.y
                 )
             }
         }
         else{
-            this.ctx.font = `15pt Monospace`
-            this.ctx.font = `${15 * scale}pt Monospace`
+            //this.ctx.font = `15pt Monospace`
+            this.ctx.font = `${15 * tileScale}pt Monospace bold`
             this.ctx.fillStyle = tile.resource.color
-            this.ctx.fillText(tile.resource.character ,x*this.viewTileSize + CONFIGS.defaultCharactersOffset.x + 10, y*this.viewTileSize + CONFIGS.defaultCharactersOffset.y)
+            this.ctx.fillText(tile.resource.character ,x*viewTileSize + charactersOffset.x + 10, y*viewTileSize + charactersOffset.y)
         }
     }
 
-    update(player,map){
+    update(mode,player,map){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
-        this.drawASCIIViewport(map, player, 0.5)   
+        if(mode === "moving camera"){
+            this.drawASCIIViewport(this.viewport2, map, player)
+        }else if(mode === "moving player"){
+            this.drawASCIIViewport(this.viewport, map, player)
+        }
+        
     }
 }
