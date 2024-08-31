@@ -3,22 +3,23 @@ import Noise from "../Utils/perlin.js"
 import {Utils} from "../Utils/Utils.js"
 import Tile from "../Classes/Tile.js"
 import Settlement from "../Classes/Settlement.js"
-import CONFIGS from "../CONFIGS.js"
 import FindPath from "../Utils/AStar.js"
 
 let random
 let working = false
 const mapValues = {}
+let CONFIGS = {}
 
 onmessage = function({data}) {
     if(working) return
     working = true
     if(data.txt === "start"){
-
+        console.log(data);
+        CONFIGS = {...data.CONFIGS}
         random = mulberry32(data.seed*9999)
         const noise = new Noise()
         console.time("terrain")
-        const {terrainMap: map, possibleSettlementSpawns, seeds} = generateMap(random,noise)
+        const {terrainMap: map, possibleSettlementSpawns, seeds} = generateMap(random,noise,CONFIGS)
         console.timeEnd("terrain")
         mapValues.terrainMap = map
         mapValues.possibleSettlementSpawns = possibleSettlementSpawns
@@ -27,7 +28,7 @@ onmessage = function({data}) {
     else if(data.txt === "add settlements"){
         
         console.time("settlements")
-        const {settlements, MAP} = placeRandomSettlements()
+        const {settlements, MAP} = placeRandomSettlements(CONFIGS)
         console.timeEnd("settlements")
         mapValues.terrainMap = MAP
         mapValues.settlements = settlements
@@ -42,7 +43,7 @@ onmessage = function({data}) {
     working = false
 }
 
-function generateMap(random, noise){
+function generateMap(random, noise, CONFIGS){
 
     const cols = Math.floor(CONFIGS.mapWidth / CONFIGS.mapTileSize)
     const rows = Math.floor(CONFIGS.mapHeight / CONFIGS.mapTileSize)
@@ -75,6 +76,7 @@ function generateMap(random, noise){
             const temp = mapData.temperature[x][y]
             const alt = mapData.altitude[x][y]
             const moist = mapData.moisture[x][y]
+            let randomTileResource = random()
 
             progress = Math.floor(counter++ / (cols * rows) * 100)
             if(progress % 5 === 0) postMessage({txt:"progress", progress})
@@ -82,58 +84,58 @@ function generateMap(random, noise){
             let id = y + (x*cols)
             // my abajo -> agua
             if(Utils.between(alt, 0, 0.3)){
-                terrainMap[x][y] = new Tile({id,x,y,tileId:"deepWater", temp,moist,alt})
+                terrainMap[x][y] = ({id,x,y,tileId:"deepWater", temp,moist,alt,randomTileResource})
             }
             else if(Utils.between(alt, 0.3, 0.35)){
-                terrainMap[x][y] = new Tile({id,x,y,tileId:"water", temp,moist,alt})
+                terrainMap[x][y] = new Tile({id,x,y,tileId:"water", temp,moist,alt,randomTileResource})
             }
             // entre el agua y lo demas -> playa
             else if(Utils.between(alt, 0.35, 0.4)){
-                terrainMap[x][y] = new Tile({id,x,y,tileId:"beach", temp,moist,alt})
+                terrainMap[x][y] = new Tile({id,x,y,tileId:"beach", temp,moist,alt,randomTileResource})
                 possibleSettlementSpawns.push({x,y})
             }
             // lo demas, pero no muuuy alto -> diferentes biomas
             else if(Utils.between(alt, 0.4, 0.7)){
                 // plains
                 if(moist <= 0.8 && Utils.between(temp,0.1,0.5) || moist <= 0.7 && Utils.between(temp,0.5,0.7)){
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt,randomTileResource})
                     possibleSettlementSpawns.push({x,y})
                 // forest
                 }else if(Utils.between(moist, 0.8,0.9) && Utils.between(temp,0.1,0.5)){
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"forest", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"forest", temp,moist,alt,randomTileResource})
                     possibleSettlementSpawns.push({x,y})
                 }
                 // jungle
                 else if (Utils.between(moist,0.7,0.9) && Utils.between(temp,0.5,1)){
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"jungle", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"jungle", temp,moist,alt,randomTileResource})
                     possibleSettlementSpawns.push({x,y})
                 }
                 // desert
                 else if ((moist <= 0.7 && temp >= 0.7)){
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"desert", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"desert", temp,moist,alt,randomTileResource})
                     possibleSettlementSpawns.push({x,y})
                 }
                 // oasis
                 else if((moist >= 0.9 && temp >= 0.7)){
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"oasis", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"oasis", temp,moist,alt,randomTileResource})
                 }
                 // water (lakes,rivers)
                 else if (moist >= 0.9 && temp >= 0.1){
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"lake", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"lake", temp,moist,alt,randomTileResource})
                 }else{
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt,randomTileResource})
                 }
             }
             // arriba de todo montañas y nieve
             else{
-                if(alt > 0.925 && temp < 0.2) terrainMap[x][y] = new Tile({id,x,y,tileId:"snow", temp,moist,alt})
-                else if(alt > 0.9) terrainMap[x][y] = new Tile({id,x,y,tileId:"highMountain", temp,moist,alt})
-                else if(alt > 0.8) terrainMap[x][y] = new Tile({id,x,y,tileId:"midMountain", temp,moist,alt})
+                if(alt > 0.925 && temp < 0.2) terrainMap[x][y] = new Tile({id,x,y,tileId:"snow", temp,moist,alt,randomTileResource})
+                else if(alt > 0.9) terrainMap[x][y] = new Tile({id,x,y,tileId:"highMountain", temp,moist,alt,randomTileResource})
+                else if(alt > 0.8) terrainMap[x][y] = new Tile({id,x,y,tileId:"midMountain", temp,moist,alt,randomTileResource})
                 else if(alt > 0.7){
-                    terrainMap[x][y] = new Tile({id,x,y,tileId:"lowMountain", temp,moist,alt})
+                    terrainMap[x][y] = new Tile({id,x,y,tileId:"lowMountain", temp,moist,alt,randomTileResource})
                     possibleSettlementSpawns.push({x,y})
                 }
-                else terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt})
+                else terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt,randomTileResource})
             }
         }
     }
@@ -182,7 +184,7 @@ function generateNoiseMap(noise, random, rows, cols, scale, freq, octaves, persi
 }
 
 // sketchy pero funciona
-function placeRandomSettlements(){
+function placeRandomSettlements(CONFIGS){
     const qty = CONFIGS.qtySettlements
     const possibleSettlementSpawns = mapValues.possibleSettlementSpawns
     const MAP = mapValues.terrainMap
@@ -203,7 +205,7 @@ function placeRandomSettlements(){
     settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y))
 
 
-    for(let i = 0; i < qty-1; i++){
+    for(let i = 0; i <= qty; i++){
         let found = false
         while(found === false && safeCounter < 1000){  // pick random position -> check distances with all other settlements
             
@@ -230,11 +232,12 @@ function placeRandomSettlements(){
             settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y))
         }
     }
-
+    if(settlements.length <= 1) settlements = null
     return {settlements,MAP}
 }
 
 function connectSettlements(settlements){
+    if(settlements === null) settlements = []
     const map = mapValues.terrainMap
     const paths = []
     let nearestSettlement = null

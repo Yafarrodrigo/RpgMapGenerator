@@ -2,7 +2,7 @@ import TILES from "../TILES.js"
 import { Utils } from "../Utils/Utils.js"
 
 export default class Tile{
-    constructor({id, x, y, tileId, temp, moist, alt}){
+    constructor({id, x, y, tileId, temp, moist, alt,randomTileResource}){
         // permanent
         this.id = id
         this.tileId = tileId
@@ -24,10 +24,10 @@ export default class Tile{
         this.canWalk = TILES[tileId].canWalk
         this.canHaveRoad = TILES[tileId].canHaveRoad
         this.isRoad = false
-        this.character = {...TILES[tileId].character[Math.floor(Math.random()*TILES[tileId].character.length)]}
+        this.character = {...TILES[tileId].character[Math.floor(randomTileResource * TILES[tileId].character.length)]}
         this.color = TILES[tileId].color
 
-        this.resource = this.getRandomResource(tileId)
+        this.resource = this.getRandomResource(tileId,randomTileResource)
         if(this.resource !== null){
             this.canPlayerSpawn = false
             if(this.resource.name === "trees" || this.resource.name === "rocks"){
@@ -59,7 +59,7 @@ export default class Tile{
         }
     }
 
-    getRandomResource(tileId){
-        return Math.random() > 0.85 ? Utils.weightedRandom(TILES[tileId].resources) : null
+    getRandomResource(tileId,randomTileResource){
+        return randomTileResource > 0.85 ? Utils.weightedRandom(TILES[tileId].resources) : null
     }
 }

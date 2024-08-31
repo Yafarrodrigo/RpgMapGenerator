@@ -1,13 +1,12 @@
-import CONFIGS from "../CONFIGS.js"
 import Viewport from "./Viewport.js"
 
 export default class Graphics{
-    constructor(map){
+    constructor(map, CONFIGS){
         this.canvas = document.querySelector('canvas')
         this.ctx = this.canvas.getContext('2d', {alpha: false})
 
-        this.canvas.height = document.getElementById('displayContainer').offsetHeight //CONFIGS.canvasHeight
-        this.canvas.width = document.getElementById('displayContainer').offsetWidth //CONFIGS.canvasWidth
+        this.canvas.height = document.getElementById('displayContainer').offsetHeight
+        this.canvas.width = document.getElementById('displayContainer').offsetWidth
         
         this.viewTileSize = CONFIGS.viewTileSize
         

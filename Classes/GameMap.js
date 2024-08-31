@@ -1,9 +1,8 @@
-import CONFIGS from "../CONFIGS.js";
 import TILES from "../TILES.js";
 import Tile from "./Tile.js";
 
-export default class Map{
-    constructor(game,width, height, randomGen, seed){
+export default class GameMap{
+    constructor(game,width, height, randomGen, seed, CONFIGS){
         this.width = width
         this.height = height
         this.tileSize = CONFIGS.mapTileSize
@@ -21,7 +20,7 @@ export default class Map{
         this.genAvailable = false
 
         this.mapGenWorker = new Worker("./Workers/MapGenWorker.js", {type: "module"})
-        this.mapGenWorker.postMessage({txt:"start", seed})
+        this.mapGenWorker.postMessage({txt:"start", seed,CONFIGS})
         document.getElementById("progressTxt").innerHTML = "Generating Terrain"
         document.getElementById("progress").innerHTML = "0%"
         this.mapGenWorker.onmessage = ({data}) => {
@@ -30,7 +29,8 @@ export default class Map{
                 for(let x = 0; x < this.cols; x++){
                     for(let y = 0; y < this.rows; y++){
                         const {id,tileId,temp,moist,alt} = data.map[x][y]
-                        this.tiles[x][y] = new Tile({id,x,y,tileId,temp,moist,alt})
+                        const randomTileResource = this.random()
+                        this.tiles[x][y] = new Tile({id,x,y,tileId,temp,moist,alt,randomTileResource})
                     }
                 }
                 this.seeds = data.seeds
@@ -62,6 +62,7 @@ export default class Map{
                 if(game !== null){
                     game.setupPlayer()
                 }
+                this.mapGenWorker.terminate()
             }
             else if (data.txt === "progress") {
                 document.getElementById("progress").innerText = data.progress +"%"

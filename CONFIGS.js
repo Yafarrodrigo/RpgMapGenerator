@@ -30,7 +30,7 @@ const CONFIGS = {
     },
 
     qtySettlements: 10,
-    settlementMinDistance: 100,
+    settlementMinDistance: 50,
     
     defaultCharactersOffset: {x:10,y:25},
     viewTileSize: 35,

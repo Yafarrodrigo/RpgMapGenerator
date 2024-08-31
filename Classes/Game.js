@@ -2,10 +2,9 @@ import Controls from "./Controls.js";
 import Graphics from "./Graphics.js";
 import mulberry32 from "../Utils/mulberry32.js"
 import GameMap from "./GameMap.js"
-import CONFIGS from "../CONFIGS.js";
 
 export default class Game{
-    constructor(seed, map){
+    constructor(seed, map, CONFIGS){
         if(!seed){
             seed = Math.random()
         }

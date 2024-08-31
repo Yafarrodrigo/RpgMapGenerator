@@ -1,5 +1,3 @@
-import CONFIGS from "../CONFIGS.js"
-
 export default class Controls{
     constructor(game){
         this.UP = false
