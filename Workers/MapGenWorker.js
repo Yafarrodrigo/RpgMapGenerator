@@ -34,6 +34,7 @@ onmessage = function({data}) {
 
         console.time("roads")
         const {paths,connectedSettlements} = connectSettlements(mapValues.settlements)
+
         console.timeEnd("roads")
 
         postMessage({txt:"finished settlements", settlements:connectedSettlements, roads:paths})
@@ -185,6 +186,7 @@ function placeRandomSettlements(){
     const qty = CONFIGS.qtySettlements
     const possibleSettlementSpawns = mapValues.possibleSettlementSpawns
     const MAP = mapValues.terrainMap
+
     let randomIndex
     let x,y
     let distances = []
@@ -200,9 +202,10 @@ function placeRandomSettlements(){
     idCounter++
     settlements.push(new Settlement(MAP[x][y].x,MAP[x][y].y))
 
+
     for(let i = 0; i < qty-1; i++){
         let found = false
-        while(found === false && safeCounter <= 1000){  // pick random position -> check distances with all other settlements
+        while(found === false && safeCounter < 1000){  // pick random position -> check distances with all other settlements
             
             distances = []
             randomIndex = Math.floor(random()*possibleSettlementSpawns.length)
@@ -216,6 +219,7 @@ function placeRandomSettlements(){
                 distances.push(Utils.distance(x,y,xx,yy))
             }
             const minDistBetween = Math.floor(MAP.length / (qty/5))
+
             if(distances.filter( dist => dist < minDistBetween).length == 0) found = true
             safeCounter++
         }

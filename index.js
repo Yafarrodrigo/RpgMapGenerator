@@ -1,5 +1,9 @@
 import Game from "./Classes/Game.js";
+import GameManager from "./Classes/GameManager.js";
 
-const game = new Game()
+const gameManager = new GameManager(Math.random()*9999999)
+gameManager.start()
 //const game = new Game()
-game.start()
+
+console.log(gameManager);
+//game.start()

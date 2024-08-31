@@ -26,12 +26,13 @@ export default class Graphics{
         const {offset} = viewport
         for(let x = viewport.startTile.x; x <= viewport.endTile.x; x++){
             for(let y = viewport.startTile.y; y <= viewport.endTile.y; y++){
+                
                 const tile = map.tiles[x][y]
                 if(!tile) continue
                 const finalX = tile.x+offset.x
                 const finalY = tile.y+offset.y
 
-                if(x === player.x && y === player.y){
+                if(player && x === player.x && y === player.y){
                     this.drawPlayer(viewport,player)
                 }else{
                     this.drawASCII(viewport,finalX,finalY,tile)
@@ -76,7 +77,7 @@ export default class Graphics{
 
     update(mode,player,map){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
-        if(mode === "moving camera"){
+        if(mode === "moving camera" || mode === "displaying map"){
             this.drawASCIIViewport(this.viewport2, map, player)
         }else if(mode === "moving player"){
             this.drawASCIIViewport(this.viewport, map, player)

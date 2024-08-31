@@ -22,6 +22,8 @@ export default class Map{
 
         this.mapGenWorker = new Worker("./Workers/MapGenWorker.js", {type: "module"})
         this.mapGenWorker.postMessage({txt:"start", seed})
+        document.getElementById("progressTxt").innerHTML = "Generating Terrain"
+        document.getElementById("progress").innerHTML = "0%"
         this.mapGenWorker.onmessage = ({data}) => {
             if(data.txt === "finished terrain"){
                 this.tiles = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
@@ -57,7 +59,9 @@ export default class Map{
                 document.getElementById("progressTxt").innerHTML = "Done"
                 document.getElementById("progress").innerHTML = ""
                 this.genAvailable = true
-                game.setupPlayer()
+                if(game !== null){
+                    game.setupPlayer()
+                }
             }
             else if (data.txt === "progress") {
                 document.getElementById("progress").innerText = data.progress +"%"

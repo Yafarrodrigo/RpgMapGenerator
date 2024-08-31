@@ -5,13 +5,17 @@ import GameMap from "./GameMap.js"
 import CONFIGS from "../CONFIGS.js";
 
 export default class Game{
-    constructor(seed){
+    constructor(seed, map){
         if(!seed){
             seed = Math.random()
         }
         const randomNumberenerator = mulberry32(seed*9999)
-        this.random =randomNumberenerator
-        this.map = new GameMap(this,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
+        this.random = randomNumberenerator
+        if(map){
+            this.map = map
+        }else{
+            this.map = new GameMap(this,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
+        }
         this.graphics = new Graphics(this.map)
         this.controls = new Controls(this)
 
