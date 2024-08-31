@@ -10,7 +10,9 @@ export default class GameManager{
             generatingMap: true
         }
         this.userParams = {
-            qtySettlements: 10
+            settlementsQTY: 10,
+            waterQTY: "standard",
+            mountainQTY: "standard"
         }
         this.currentState = "generating map"
         this.clock = null
@@ -30,23 +32,85 @@ export default class GameManager{
 
                 this.currentMap = new GameMap(null ,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, randomSeed, 
                     {...CONFIGS,
-                        qtySettlements: this.userParams.qtySettlements
+                        settlementsQTY: this.userParams.settlementsQTY,
+                        waterQTY: this.userParams.waterQTY,
+                        mountainQTY: this.userParams.mountainQTY
                     })
             }
 
             else if(e.key === "1"){
-                this.userParams.qtySettlements = 6
-                document.getElementById("qtyOfSettlements").innerText = "Low"
+                this.userParams.settlementsQTY = 6
+                const elem = document.getElementById("qtyOfSettlements")
+                elem.innerText = "Low"
+                elem.style.color = "yellow"
             }
             else if(e.key === "2"){
-                this.userParams.qtySettlements = 10
-                document.getElementById("qtyOfSettlements").innerText = "Standard"
+                const elem = document.getElementById("qtyOfSettlements")
+                this.userParams.settlementsQTY = 10
+                elem.innerText = "Standard"
+                elem.style.color = "white"
             }
             else if(e.key === "3"){
-                this.userParams.qtySettlements = 16
-                document.getElementById("qtyOfSettlements").innerText = "High"
+                const elem = document.getElementById("qtyOfSettlements")
+                this.userParams.settlementsQTY = 16
+                elem.innerText = "High"
+                elem.style.color = "orange"
             }
-            console.log(this.userParams);
+
+            else if(e.key === "4"){
+                const elem = document.getElementById("qtyOfWater")
+                this.userParams.waterQTY = "low"
+                elem.innerText = "Low"
+                elem.style.color = "yellow"
+            }
+            else if(e.key === "5"){
+                const elem = document.getElementById("qtyOfWater")
+                this.userParams.waterQTY = "standard"
+                elem.innerText = "Standard"
+                elem.style.color = "white"
+            }
+            else if(e.key === "6"){
+                const elem = document.getElementById("qtyOfWater")
+                this.userParams.waterQTY = "high"
+                elem.innerText = "High"
+                elem.style.color = "orange"
+            }
+
+            else if(e.key === "7"){
+                const elem = document.getElementById("qtyOfMountains")
+                this.userParams.mountainQTY = "low"
+                elem.innerText = "Low"
+                elem.style.color = "yellow"
+            }
+            else if(e.key === "8"){
+                const elem = document.getElementById("qtyOfMountains")
+                this.userParams.mountainQTY = "standard"
+                elem.innerText = "Standard"
+                elem.style.color = "white"
+            }
+            else if(e.key === "9"){
+                const elem = document.getElementById("qtyOfMountains")
+                this.userParams.mountainQTY = "high"
+                elem.innerText = "High"
+                elem.style.color = "orange"
+            }
+            else if(e.key.toLocaleLowerCase() === "r"){
+                const elem = document.getElementById("qtyOfSettlements")
+                elem.innerText = "Standard"
+                elem.style.color = "white"
+                const elem2 = document.getElementById("qtyOfWater")
+                elem2.innerText = "Standard"
+                elem2.style.color = "white"
+                const elem3 = document.getElementById("qtyOfMountains")
+                elem3.innerText = "Standard"
+                elem3.style.color = "white"
+                
+                this.userParams = {
+                    settlementsQTY: 10,
+                    waterQTY: "standard",
+                    mountainQTY: "standard"
+                }
+            }
         })
 
         const randomNumberenerator = mulberry32(seed*9999)

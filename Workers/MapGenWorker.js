@@ -14,8 +14,8 @@ onmessage = function({data}) {
     if(working) return
     working = true
     if(data.txt === "start"){
-        console.log(data);
-        CONFIGS = {...data.CONFIGS}
+        
+        CONFIGS = data.CONFIGS
         random = mulberry32(data.seed*9999)
         const noise = new Noise()
         console.time("terrain")
@@ -70,12 +70,28 @@ function generateMap(random, noise, CONFIGS){
     seeds.altitude = altNoiseMap.seed
     
     let counter = 0
+
     let progress = 0
     for(let x = 0; x < cols; x++){
         for(let y = 0; y < rows; y++){
-            const temp = mapData.temperature[x][y]
-            const alt = mapData.altitude[x][y]
-            const moist = mapData.moisture[x][y]
+            let temp = mapData.temperature[x][y]
+            let alt = mapData.altitude[x][y]
+            let moist = mapData.moisture[x][y]
+
+            // check for water QTY modifier
+            if(CONFIGS.waterQTY === "low"){
+                if(alt <= 0.4) alt += 0.2
+            }else if(CONFIGS.waterQTY === "high"){
+                if(alt < 0.5) {alt -= 0.2; moist += 0.2} 
+            }
+
+            // check for mountain QTY modifier
+            if(CONFIGS.mountainQTY === "low"){
+                if(alt >= 0.7) alt-= 0.1
+            }else if(CONFIGS.mountainQTY === "high"){
+                if(alt >= 0.5 || alt <= 0.7) alt += (alt-0.4)
+            }
+            
             let randomTileResource = random()
 
             progress = Math.floor(counter++ / (cols * rows) * 100)
@@ -185,7 +201,7 @@ function generateNoiseMap(noise, random, rows, cols, scale, freq, octaves, persi
 
 // sketchy pero funciona
 function placeRandomSettlements(CONFIGS){
-    const qty = CONFIGS.qtySettlements
+    const qty = CONFIGS.settlementsQTY
     const possibleSettlementSpawns = mapValues.possibleSettlementSpawns
     const MAP = mapValues.terrainMap
 

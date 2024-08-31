@@ -29,7 +29,7 @@ const CONFIGS = {
         }
     },
 
-    qtySettlements: 10,
+    settlementsQTY: 10,
     settlementMinDistance: 50,
     
     defaultCharactersOffset: {x:10,y:25},
@@ -42,6 +42,9 @@ const CONFIGS = {
 
     camStartOffsetX: 40,
     camStartOffsetY: 40,
+
+    waterQTY: "standard",
+    mountainQTY: "standard"
 
 }
 
