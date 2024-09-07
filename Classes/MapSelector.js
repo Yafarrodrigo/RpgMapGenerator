@@ -2,10 +2,12 @@ import GameMap from "./GameMap.js"
 import mulberry32 from "../Utils/mulberry32.js"
 import Graphics from "./Graphics.js";
 import {default as defaultCONFIGS} from "../CONFIGS.js";
+import LogPanel from "./LogPanel.js";
 
-export default class GameManager{
+export default class MapSelector{
     constructor(seed){
         this.game = null
+        this.log = new LogPanel()
         this.flags = {
             generatingMap: true
         }
@@ -30,7 +32,7 @@ export default class GameManager{
                 const randomNumberenerator = mulberry32(randomSeed)
                 this.random = randomNumberenerator
 
-                this.currentMap = new GameMap(null ,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, randomSeed, 
+                this.currentMap = new GameMap(null,this.log,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, randomSeed, 
                     {...CONFIGS,
                         settlementsQTY: this.userParams.settlementsQTY,
                         waterQTY: this.userParams.waterQTY,
@@ -116,7 +118,7 @@ export default class GameManager{
         const randomNumberenerator = mulberry32(seed*9999)
         this.random = randomNumberenerator
 
-        this.currentMap = new GameMap(null ,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed, CONFIGS)
+        this.currentMap = new GameMap(null, this.log, CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed, CONFIGS)
 
         this.graphics = new Graphics(this.currentMap, CONFIGS)
 

@@ -2,7 +2,7 @@ import TILES from "../TILES.js";
 import Tile from "./Tile.js";
 
 export default class GameMap{
-    constructor(game,width, height, randomGen, seed, CONFIGS){
+    constructor(game,logPanel, width, height, randomGen, seed, CONFIGS){
         this.width = width
         this.height = height
         this.tileSize = CONFIGS.mapTileSize
@@ -18,11 +18,12 @@ export default class GameMap{
             altitude: 0,
         }
         this.genAvailable = false
-
+        
         this.mapGenWorker = new Worker("./Workers/MapGenWorker.js", {type: "module"})
         this.mapGenWorker.postMessage({txt:"start", seed,CONFIGS})
-        document.getElementById("progressTxt").innerHTML = "Generating Terrain"
-        document.getElementById("progress").innerHTML = "0%"
+
+        let currentProgressTxt = "Generating Terrain... "
+        logPanel.info(currentProgressTxt + "0%")
         this.mapGenWorker.onmessage = ({data}) => {
             if(data.txt === "finished terrain"){
                 this.tiles = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
@@ -34,16 +35,15 @@ export default class GameMap{
                     }
                 }
                 this.seeds = data.seeds
-                
-                // update UI
-                document.getElementById("progress").innerHTML = "0%"
-                document.getElementById("progressTxt").innerHTML = "Connecting Settlements"
+
+                logPanel.changeLastMsg(currentProgressTxt + "100%")
+                logPanel.info(currentProgressTxt + "100%")
+                currentProgressTxt = "Generating Settlements... "
 
                 this.mapGenWorker.postMessage({txt:"add settlements"})
             }
             else if(data.txt === "finished settlements"){
                 this.settlements = data.settlements.filter( set => set.isConnected)
-                document.getElementById("progress").innerHTML = "100%"
                 
                 // change tiles to roads
                 this.paths = data.roads
@@ -51,21 +51,20 @@ export default class GameMap{
                     this.tiles[x][y].changeTile("road")
                 }))
 
-                // change tiles to settlements
                 this.settlements.forEach( ({x,y}) => {
                     this.placeSettlementOnMap(x,y,this.tiles)
                 })
 
-                document.getElementById("progressTxt").innerHTML = "Done"
-                document.getElementById("progress").innerHTML = ""
                 this.genAvailable = true
                 if(game !== null){
                     game.setupPlayer()
                 }
                 this.mapGenWorker.terminate()
+                logPanel.changeLastMsg(currentProgressTxt + "100%")
+                logPanel.info("Map ready to play!",true)
             }
             else if (data.txt === "progress") {
-                document.getElementById("progress").innerText = data.progress +"%"
+                logPanel.changeLastMsg(currentProgressTxt + data.progress + "%")
             }
 
         }

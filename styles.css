@@ -12,17 +12,6 @@ body{
     overflow: hidden;
 }
 
-#statush1{
-    position: absolute;
-    top: 0;
-    z-index: 9999;
-    background-color: black;
-    color: white;
-    font-size: 1.5rem;
-    width: 100%;
-    text-align: center;
-}
-
 #gameContainer{
     display: flex;
     flex-direction: row;

@@ -2,9 +2,11 @@ import Controls from "./Controls.js";
 import Graphics from "./Graphics.js";
 import mulberry32 from "../Utils/mulberry32.js"
 import GameMap from "./GameMap.js"
+import LogPanel from "./LogPanel.js";
 
 export default class Game{
     constructor(seed, map, CONFIGS){
+        this.log = new LogPanel()
         if(!seed){
             seed = Math.random()
         }
@@ -13,7 +15,7 @@ export default class Game{
         if(map){
             this.map = map
         }else{
-            this.map = new GameMap(this,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
+            this.map = new GameMap(this,this.log,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
         }
         this.graphics = new Graphics(this.map)
         this.controls = new Controls(this)

@@ -18,25 +18,25 @@ onmessage = function({data}) {
         CONFIGS = data.CONFIGS
         random = mulberry32(data.seed*9999)
         const noise = new Noise()
-        console.time("terrain")
+        //console.time("terrain")
         const {terrainMap: map, possibleSettlementSpawns, seeds} = generateMap(random,noise,CONFIGS)
-        console.timeEnd("terrain")
+        //console.timeEnd("terrain")
         mapValues.terrainMap = map
         mapValues.possibleSettlementSpawns = possibleSettlementSpawns
         postMessage({txt:"finished terrain", map, seeds})
     }
     else if(data.txt === "add settlements"){
         
-        console.time("settlements")
+        //console.time("settlements")
         const {settlements, MAP} = placeRandomSettlements(CONFIGS)
-        console.timeEnd("settlements")
+        //console.timeEnd("settlements")
         mapValues.terrainMap = MAP
         mapValues.settlements = settlements
 
-        console.time("roads")
+        //console.time("roads")
         const {paths,connectedSettlements} = connectSettlements(mapValues.settlements)
 
-        console.timeEnd("roads")
+        //console.timeEnd("roads")
 
         postMessage({txt:"finished settlements", settlements:connectedSettlements, roads:paths})
     }
