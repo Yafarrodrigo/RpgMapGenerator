@@ -1,27 +1,28 @@
 import Controls from "./Controls.js";
 import Graphics from "./Graphics.js";
 import mulberry32 from "../Utils/mulberry32.js"
-import GameMap from "./GameMap.js"
 import LogPanel from "./LogPanel.js";
 
 export default class Game{
     constructor(seed, map, CONFIGS){
         this.log = new LogPanel()
+        this.log.clear()
+
+        // MMUUY TERMPORAL
+        document.getElementById('sidebar').innerHTML = ""
+
         if(!seed){
             seed = Math.random()
         }
         const randomNumberenerator = mulberry32(seed*9999)
         this.random = randomNumberenerator
-        if(map){
-            this.map = map
-        }else{
-            this.map = new GameMap(this,this.log,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed)
-        }
-        this.graphics = new Graphics(this.map)
+        this.map = map
+
+        this.graphics = new Graphics(this.map, CONFIGS)
         this.controls = new Controls(this)
 
         this.player = null
-        this.mode = "moving camera" // "moving player", "moving camera", "menu"
+        this.mode = "moving player" // "moving player", "moving camera", "menu"
 
         this.clock = null
     }

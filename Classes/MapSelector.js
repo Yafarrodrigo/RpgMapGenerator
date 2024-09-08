@@ -5,7 +5,7 @@ import {default as defaultCONFIGS} from "../CONFIGS.js";
 import LogPanel from "./LogPanel.js";
 
 export default class MapSelector{
-    constructor(seed){
+    constructor(seed, moveToGameFunction){
         this.game = null
         this.log = new LogPanel()
         this.flags = {
@@ -19,109 +19,23 @@ export default class MapSelector{
         this.currentState = "generating map"
         this.clock = null
 
-        const CONFIGS = {...defaultCONFIGS}
+        this.CONFIGS = {...defaultCONFIGS}
 
-        document.addEventListener('keypress', (e) => {
-            e.preventDefault()
-            if(this.flags.generatingMap === true) return
-            
-            if(e.key === " "){
-                this.flags.generatingMap = true
-                this.start()
-                const randomSeed = Math.random()*9999999
-                const randomNumberenerator = mulberry32(randomSeed)
-                this.random = randomNumberenerator
-
-                this.currentMap = new GameMap(null,this.log,CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, randomSeed, 
-                    {...CONFIGS,
-                        settlementsQTY: this.userParams.settlementsQTY,
-                        waterQTY: this.userParams.waterQTY,
-                        mountainQTY: this.userParams.mountainQTY
-                    })
-            }
-
-            else if(e.key === "1"){
-                this.userParams.settlementsQTY = 6
-                const elem = document.getElementById("qtyOfSettlements")
-                elem.innerText = "Low"
-                elem.style.color = "yellow"
-            }
-            else if(e.key === "2"){
-                const elem = document.getElementById("qtyOfSettlements")
-                this.userParams.settlementsQTY = 10
-                elem.innerText = "Standard"
-                elem.style.color = "white"
-            }
-            else if(e.key === "3"){
-                const elem = document.getElementById("qtyOfSettlements")
-                this.userParams.settlementsQTY = 16
-                elem.innerText = "High"
-                elem.style.color = "orange"
-            }
-
-            else if(e.key === "4"){
-                const elem = document.getElementById("qtyOfWater")
-                this.userParams.waterQTY = "low"
-                elem.innerText = "Low"
-                elem.style.color = "yellow"
-            }
-            else if(e.key === "5"){
-                const elem = document.getElementById("qtyOfWater")
-                this.userParams.waterQTY = "standard"
-                elem.innerText = "Standard"
-                elem.style.color = "white"
-            }
-            else if(e.key === "6"){
-                const elem = document.getElementById("qtyOfWater")
-                this.userParams.waterQTY = "high"
-                elem.innerText = "High"
-                elem.style.color = "orange"
-            }
-
-            else if(e.key === "7"){
-                const elem = document.getElementById("qtyOfMountains")
-                this.userParams.mountainQTY = "low"
-                elem.innerText = "Low"
-                elem.style.color = "yellow"
-            }
-            else if(e.key === "8"){
-                const elem = document.getElementById("qtyOfMountains")
-                this.userParams.mountainQTY = "standard"
-                elem.innerText = "Standard"
-                elem.style.color = "white"
-            }
-            else if(e.key === "9"){
-                const elem = document.getElementById("qtyOfMountains")
-                this.userParams.mountainQTY = "high"
-                elem.innerText = "High"
-                elem.style.color = "orange"
-            }
-            else if(e.key.toLocaleLowerCase() === "r"){
-                const elem = document.getElementById("qtyOfSettlements")
-                elem.innerText = "Standard"
-                elem.style.color = "white"
-                const elem2 = document.getElementById("qtyOfWater")
-                elem2.innerText = "Standard"
-                elem2.style.color = "white"
-                const elem3 = document.getElementById("qtyOfMountains")
-                elem3.innerText = "Standard"
-                elem3.style.color = "white"
-                
-                this.userParams = {
-                    settlementsQTY: 10,
-                    waterQTY: "standard",
-                    mountainQTY: "standard"
-                }
-            }
-        })
+        this.moveToGameFunction = moveToGameFunction
+        this.boundControls = this.controls.bind(this)
+        document.addEventListener('keydown', this.boundControls)
 
         const randomNumberenerator = mulberry32(seed*9999)
         this.random = randomNumberenerator
 
-        this.currentMap = new GameMap(null, this.log, CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed, CONFIGS)
+        this.currentMap = new GameMap(null, this.log, this.CONFIGS.mapWidth,this.CONFIGS.mapHeight,this.random, seed, this.CONFIGS)
 
-        this.graphics = new Graphics(this.currentMap, CONFIGS)
+        this.graphics = new Graphics(this.currentMap, this.CONFIGS)
 
+    }
+
+    terminate(){
+        document.removeEventListener('keydown', this.boundControls)
     }
 
     start(){
@@ -143,6 +57,103 @@ export default class MapSelector{
                 this.flags.generatingMap = false
                 this.stop()
             }
+        }
+    }
+
+    controls(e){
+        e.preventDefault()
+        if(this.flags.generatingMap === true) return
+        
+        if(e.key === " "){
+            this.flags.generatingMap = true
+            this.start()
+            const randomSeed = Math.random()*9999999
+            const randomNumberenerator = mulberry32(randomSeed)
+            this.random = randomNumberenerator
+
+            this.currentMap = new GameMap(null,this.log,this.CONFIGS.mapWidth,this.CONFIGS.mapHeight,this.random, randomSeed, 
+                {...this.CONFIGS,
+                    settlementsQTY: this.userParams.settlementsQTY,
+                    waterQTY: this.userParams.waterQTY,
+                    mountainQTY: this.userParams.mountainQTY
+                })
+        }
+
+        else if(e.key === "1"){
+            this.userParams.settlementsQTY = 6
+            const elem = document.getElementById("qtyOfSettlements")
+            elem.innerText = "Low"
+            elem.style.color = "yellow"
+        }
+        else if(e.key === "2"){
+            const elem = document.getElementById("qtyOfSettlements")
+            this.userParams.settlementsQTY = 10
+            elem.innerText = "Standard"
+            elem.style.color = "white"
+        }
+        else if(e.key === "3"){
+            const elem = document.getElementById("qtyOfSettlements")
+            this.userParams.settlementsQTY = 16
+            elem.innerText = "High"
+            elem.style.color = "orange"
+        }
+
+        else if(e.key === "4"){
+            const elem = document.getElementById("qtyOfWater")
+            this.userParams.waterQTY = "low"
+            elem.innerText = "Low"
+            elem.style.color = "yellow"
+        }
+        else if(e.key === "5"){
+            const elem = document.getElementById("qtyOfWater")
+            this.userParams.waterQTY = "standard"
+            elem.innerText = "Standard"
+            elem.style.color = "white"
+        }
+        else if(e.key === "6"){
+            const elem = document.getElementById("qtyOfWater")
+            this.userParams.waterQTY = "high"
+            elem.innerText = "High"
+            elem.style.color = "orange"
+        }
+
+        else if(e.key === "7"){
+            const elem = document.getElementById("qtyOfMountains")
+            this.userParams.mountainQTY = "low"
+            elem.innerText = "Low"
+            elem.style.color = "yellow"
+        }
+        else if(e.key === "8"){
+            const elem = document.getElementById("qtyOfMountains")
+            this.userParams.mountainQTY = "standard"
+            elem.innerText = "Standard"
+            elem.style.color = "white"
+        }
+        else if(e.key === "9"){
+            const elem = document.getElementById("qtyOfMountains")
+            this.userParams.mountainQTY = "high"
+            elem.innerText = "High"
+            elem.style.color = "orange"
+        }
+        else if(e.key.toLocaleLowerCase() === "r"){
+            const elem = document.getElementById("qtyOfSettlements")
+            elem.innerText = "Standard"
+            elem.style.color = "white"
+            const elem2 = document.getElementById("qtyOfWater")
+            elem2.innerText = "Standard"
+            elem2.style.color = "white"
+            const elem3 = document.getElementById("qtyOfMountains")
+            elem3.innerText = "Standard"
+            elem3.style.color = "white"
+            
+            this.userParams = {
+                settlementsQTY: 10,
+                waterQTY: "standard",
+                mountainQTY: "standard"
+            }
+        }else if(e.key === "Enter"){
+            this.terminate()
+            this.moveToGameFunction(this.currentMap)
         }
     }
 }

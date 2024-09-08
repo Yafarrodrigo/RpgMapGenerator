@@ -3,6 +3,10 @@ export default class LogPanel{
         this.panel = document.getElementById('log')
     }
 
+    clear(){
+        this.panel.innerHTML = ""
+    }
+
     info(txt,important){
         if(important){
             this.msg(txt, "yellow")
