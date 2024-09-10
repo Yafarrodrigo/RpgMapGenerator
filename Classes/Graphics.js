@@ -67,10 +67,9 @@ export default class Graphics{
             }
         }
         else{
-            //this.ctx.font = `15pt Monospace`
-            this.ctx.font = `${15 * tileScale}pt Monospace bold`
+            this.ctx.font = `${15 * tileScale}pt Monospace`
             this.ctx.fillStyle = tile.resource.color
-            this.ctx.fillText(tile.resource.character ,x*viewTileSize + charactersOffset.x + 10, y*viewTileSize + charactersOffset.y)
+            this.ctx.fillText(tile.resource.character ,x*viewTileSize + charactersOffset.x , y*viewTileSize + charactersOffset.y)
         }
     }
 

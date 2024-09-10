@@ -89,7 +89,7 @@ function generateMap(random, noise, CONFIGS){
             if(CONFIGS.mountainQTY === "low"){
                 if(alt >= 0.7) alt-= 0.1
             }else if(CONFIGS.mountainQTY === "high"){
-                if(alt >= 0.5 || alt <= 0.7) alt += (alt-0.4)
+                if(alt >= 0.6 || alt <= 0.7) alt += (alt-0.4)
             }
             
             let randomTileResource = random()

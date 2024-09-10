@@ -5,17 +5,28 @@ import {default as defaultCONFIGS} from "../CONFIGS.js";
 import LogPanel from "./LogPanel.js";
 
 export default class MapSelector{
-    constructor(seed, moveToGameFunction){
+    constructor(seed, moveToGameFunction, customUserParams, skip){
+
+        if(skip === true){
+            document.getElementById('blackscreen').style.display = "grid"
+        }else{
+            document.getElementById('blackscreen').style.display = "none"
+        }
+
         this.game = null
+        this.seed = seed
         this.log = new LogPanel()
         this.flags = {
-            generatingMap: true
+            generatingMap: true,
+            skipSelection: skip
         }
+
         this.userParams = {
-            settlementsQTY: 10,
-            waterQTY: "standard",
-            mountainQTY: "standard"
+            settlementsQTY: customUserParams.settlementsQTY,
+            waterQTY: customUserParams.waterQTY,
+            mountainQTY: customUserParams.mountainQTY
         }
+
         this.currentState = "generating map"
         this.clock = null
 
@@ -28,10 +39,22 @@ export default class MapSelector{
         const randomNumberenerator = mulberry32(seed*9999)
         this.random = randomNumberenerator
 
-        this.currentMap = new GameMap(null, this.log, this.CONFIGS.mapWidth,this.CONFIGS.mapHeight,this.random, seed, this.CONFIGS)
+        this.currentGenData = {
+
+        }
+        this.currentMap = new GameMap(null, this.log, this.CONFIGS.mapWidth,this.CONFIGS.mapHeight,this.random, seed, 
+            {...this.CONFIGS,
+                settlementsQTY: this.userParams.settlementsQTY,
+                waterQTY: this.userParams.waterQTY,
+                mountainQTY: this.userParams.mountainQTY
+            })
 
         this.graphics = new Graphics(this.currentMap, this.CONFIGS)
 
+    }
+
+    getCurrentMapGenData(){
+        return this.currentGenData
     }
 
     terminate(){
@@ -48,6 +71,9 @@ export default class MapSelector{
         clearInterval(this.clock)
         this.clock = null
         if(this.flags.generatingMap === true) this.flags.generatingMap = false
+        if(this.flags.skipSelection === true){
+            this.skipSelectionAndPlay()
+        }
     }
 
     update(){
@@ -61,17 +87,16 @@ export default class MapSelector{
     }
 
     controls(e){
-        e.preventDefault()
         if(this.flags.generatingMap === true) return
-        
         if(e.key === " "){
+            e.preventDefault()
             this.flags.generatingMap = true
             this.start()
-            const randomSeed = Math.random()*9999999
-            const randomNumberenerator = mulberry32(randomSeed)
+            this.seed = Math.random()*9999999
+            const randomNumberenerator = mulberry32(this.seed)
             this.random = randomNumberenerator
 
-            this.currentMap = new GameMap(null,this.log,this.CONFIGS.mapWidth,this.CONFIGS.mapHeight,this.random, randomSeed, 
+            this.currentMap = new GameMap(null,this.log,this.CONFIGS.mapWidth,this.CONFIGS.mapHeight,this.random, this.seed, 
                 {...this.CONFIGS,
                     settlementsQTY: this.userParams.settlementsQTY,
                     waterQTY: this.userParams.waterQTY,
@@ -80,18 +105,21 @@ export default class MapSelector{
         }
 
         else if(e.key === "1"){
+            e.preventDefault()
             this.userParams.settlementsQTY = 6
             const elem = document.getElementById("qtyOfSettlements")
             elem.innerText = "Low"
             elem.style.color = "yellow"
         }
         else if(e.key === "2"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfSettlements")
             this.userParams.settlementsQTY = 10
             elem.innerText = "Standard"
             elem.style.color = "white"
         }
         else if(e.key === "3"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfSettlements")
             this.userParams.settlementsQTY = 16
             elem.innerText = "High"
@@ -99,18 +127,21 @@ export default class MapSelector{
         }
 
         else if(e.key === "4"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfWater")
             this.userParams.waterQTY = "low"
             elem.innerText = "Low"
             elem.style.color = "yellow"
         }
         else if(e.key === "5"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfWater")
             this.userParams.waterQTY = "standard"
             elem.innerText = "Standard"
             elem.style.color = "white"
         }
         else if(e.key === "6"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfWater")
             this.userParams.waterQTY = "high"
             elem.innerText = "High"
@@ -118,24 +149,28 @@ export default class MapSelector{
         }
 
         else if(e.key === "7"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfMountains")
             this.userParams.mountainQTY = "low"
             elem.innerText = "Low"
             elem.style.color = "yellow"
         }
         else if(e.key === "8"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfMountains")
             this.userParams.mountainQTY = "standard"
             elem.innerText = "Standard"
             elem.style.color = "white"
         }
         else if(e.key === "9"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfMountains")
             this.userParams.mountainQTY = "high"
             elem.innerText = "High"
             elem.style.color = "orange"
         }
         else if(e.key.toLocaleLowerCase() === "r"){
+            e.preventDefault()
             const elem = document.getElementById("qtyOfSettlements")
             elem.innerText = "Standard"
             elem.style.color = "white"
@@ -152,8 +187,24 @@ export default class MapSelector{
                 mountainQTY: "standard"
             }
         }else if(e.key === "Enter"){
+            e.preventDefault()
             this.terminate()
-            this.moveToGameFunction(this.currentMap)
+            localStorage.setItem('mapGenData', JSON.stringify(
+                {
+                    seed: this.seed,
+                    settlementsQTY: this.userParams.settlementsQTY,
+                    waterQTY: this.userParams.waterQTY,
+                    mountainQTY: this.userParams.mountainQTY
+                }
+            ))
+            this.moveToGameFunction(this.seed,this.currentMap)
+            document.getElementById('blackscreen').style.display = "none"
         }
+    }
+
+    skipSelectionAndPlay(){
+        this.terminate()
+        this.moveToGameFunction(this.seed, this.currentMap)
+        document.getElementById('blackscreen').style.display = "none"
     }
 }

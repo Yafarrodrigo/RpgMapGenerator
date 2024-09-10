@@ -12,6 +12,22 @@ body{
     overflow: hidden;
 }
 
+#blackscreen{
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    z-index: 99999;
+    position: absolute;
+    display: grid;
+    place-items: center;
+    left: 0;
+    right: 0;
+}
+
+#blackscreen h1{
+    font-size: 2rem;
+}
+
 #mainMenuCanvas{
     width: 100vw;
     height: 100vh;

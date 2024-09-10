@@ -19,12 +19,12 @@ export default class GameMap{
         }
         this.genAvailable = false
         
-        this.mapGenWorker = new Worker("./Workers/MapGenWorker.js", {type: "module"})
-        this.mapGenWorker.postMessage({txt:"start", seed,CONFIGS})
+        const mapGenWorker = new Worker("./Workers/MapGenWorker.js", {type: "module"})
+        mapGenWorker.postMessage({txt:"start", seed,CONFIGS})
 
         let currentProgressTxt = "Generating Terrain... "
         logPanel.info(currentProgressTxt + "0%")
-        this.mapGenWorker.onmessage = ({data}) => {
+        mapGenWorker.onmessage = ({data}) => {
             if(data.txt === "finished terrain"){
                 this.tiles = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
                 for(let x = 0; x < this.cols; x++){
@@ -40,7 +40,7 @@ export default class GameMap{
                 logPanel.info(currentProgressTxt + "100%")
                 currentProgressTxt = "Generating Settlements... "
 
-                this.mapGenWorker.postMessage({txt:"add settlements"})
+                mapGenWorker.postMessage({txt:"add settlements"})
             }
             else if(data.txt === "finished settlements"){
                 this.settlements = data.settlements.filter( set => set.isConnected)
@@ -59,7 +59,7 @@ export default class GameMap{
                 if(game !== null){
                     game.setupPlayer()
                 }
-                this.mapGenWorker.terminate()
+                mapGenWorker.terminate()
                 logPanel.changeLastMsg(currentProgressTxt + "100%")
                 logPanel.info("Map ready to play!",true)
             }

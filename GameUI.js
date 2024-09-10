@@ -1,5 +1,6 @@
 const GameUI = `
 <div id="gameContainer">
+        <div id="blackscreen"> <h1> loading... </h1> </div>
         <div id="displayContainer">
             <canvas height="1" width="1"></canvas>
             <div id="logContainer">
