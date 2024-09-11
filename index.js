@@ -1,39 +1,36 @@
 import Game from "./Classes/Game.js";
-import MainMenu from "./Classes/MainMenu.js";
+import Menu from "./Classes/Menu.js";
 import MapSelector from "./Classes/MapSelector.js";
 import gameUI from "./GameUI.js"
 import CONFIGS from "./CONFIGS.js";
+import CharacterCreation from "./Classes/CharacterCreation.js";
 
+let currentMenu = null
 
-const mainMenu = new MainMenu()
-const savedMapGenData = JSON.parse(localStorage.getItem('mapGenData'))
-    if(savedMapGenData !== null){
-        mainMenu.addOption("Continue", moveToMapSelector)
-    }
-mainMenu.addOption("New game", startNewGame)
-mainMenu.addOption("Reset", ()=> {localStorage.clear(); location.reload()})
+function moveToMainMenu(){
+    const mainMenu = new Menu("Main Menu")
+    const savedMapGenData = JSON.parse(localStorage.getItem('mapGenData'))
+        if(savedMapGenData !== null){
+            mainMenu.addOption("Continue", moveToMapSelector)
+        }
+    mainMenu.addOption("New game", moveToCharacterCreation)
+    mainMenu.addOption("Reset", ()=> {localStorage.clear(); location.reload()})
 
-/* mainMenu.addOption("Warrior",()=>console.log("Warrior selected"))
-mainMenu.addOption("Mage",()=>console.log("Mage selected"))
-mainMenu.addOption("Rogue",()=>console.log("Rogue selected"))
-mainMenu.addOption("Hunter",()=>console.log("Hunter selected"))
-mainMenu.addOption("Priest",()=>console.log("Priest selected")) */
-
-/* mainMenu.AddOption("Continue", moveToMapSelector)
-mainMenu.AddOption("New Game", startNewGame)
-mainMenu.AddOption("Options", ()=>console.log("nothing yet :(")) */
-
-function startNewGame(){
-    localStorage.clear()
-    moveToMapSelector()
+    currentMenu = mainMenu
 }
 
-function moveToMapSelector(){
+function moveToCharacterCreation(){
+    currentMenu.terminate()
+    const charCreation = new CharacterCreation(moveToMapSelector)
+    currentMenu = charCreation.currentMenu
+}
+
+function moveToMapSelector(newPlayerStats){
 
     let mapSelector
     const SEED = 1
 
-    mainMenu.terminate()
+    currentMenu.terminate()
     document.body.innerHTML = gameUI
 
     const savedMapGenData = JSON.parse(localStorage.getItem('mapGenData'))
@@ -42,7 +39,7 @@ function moveToMapSelector(){
             settlementsQTY: savedMapGenData.settlementsQTY,
             waterQTY: savedMapGenData.waterQTY,
             mountainQTY: savedMapGenData.mountainQTY
-        }, true)
+        }, true, newPlayerStats)
         mapSelector.start()
 
     }else{
@@ -50,23 +47,31 @@ function moveToMapSelector(){
             settlementsQTY: "10",
             waterQTY: "standard",
             mountainQTY: "standard"
-        } ,false)
+        } ,false, newPlayerStats)
         mapSelector.start()
     }
+
+    currentMenu = mapSelector
 }
 
-function moveToGame(seed, currentMap){
+function moveToGame(seed, currentMap, newPlayerStats){
     const game = new Game(seed,currentMap,CONFIGS)
     const savedPlayer = JSON.parse(localStorage.getItem('player'))
     if(savedPlayer !== null){
         game.player = savedPlayer
     }else{
-        game.setupPlayer()
+        game.setupPlayer(newPlayerStats)
         localStorage.setItem('player', JSON.stringify(game.player))
     }
     game.update()
+    console.log(game);
 }
 
+function storageUsage(){
+    const maxUsage = 5242870
+    const currentUsage = maxUsage - (1024 * 1024 * 5 - escape(encodeURIComponent(JSON.stringify(localStorage))).length)
+    console.log("localStorage: ", (currentUsage/maxUsage).toFixed(4) + "%")
+}
 
-// skip to game
-//moveToMapSelector()
+moveToMainMenu()
+storageUsage()

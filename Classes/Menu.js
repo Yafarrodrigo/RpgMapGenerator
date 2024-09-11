@@ -1,8 +1,13 @@
 import SimpleMenu from "./SimpleMenu.js"
 
-export default class MainMenu{
-    constructor(){
-        const canvas = document.getElementById('mainMenuCanvas')
+export default class Menu{
+    constructor(title){
+        const canvas = document.createElement('canvas')
+        canvas.classList.add("menuCanvas")
+        canvas.width = 1920
+        canvas.height = 1080
+        document.body.append(canvas)
+
         this.w = canvas.width
         this.h = canvas.height
         this.canvas = canvas
@@ -10,9 +15,9 @@ export default class MainMenu{
 
         this.ctx.fillStyle = "black"
         this.ctx.fillRect(0,0,this.w,this.h)
-        this.drawText("Main Menu", 25, this.w/2, this.h/3, true)
+        this.drawText(title, 25, this.w/2, this.h/3, true)
 
-        this.subMenu = new SimpleMenu()
+        this.subMenu = new SimpleMenu(this.canvas)
     }
 
     addOption(txt, func){
@@ -30,5 +35,6 @@ export default class MainMenu{
 
     terminate(){
         this.subMenu.terminate()
+        this.canvas.remove()
     }
 }

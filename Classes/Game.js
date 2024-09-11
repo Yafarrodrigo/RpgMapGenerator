@@ -2,6 +2,7 @@ import Controls from "./Controls.js";
 import Graphics from "./Graphics.js";
 import mulberry32 from "../Utils/mulberry32.js"
 import LogPanel from "./LogPanel.js";
+import Player from "./Player.js";
 
 export default class Game{
     constructor(seed, map, CONFIGS){
@@ -39,9 +40,10 @@ export default class Game{
     }
 
 
-    setupPlayer(){
+    setupPlayer(newPlayerStats){
         const {x,y} = this.selectPlayerStartLocation()
-        this.player = {x,y, character:{value:"@", color: "magenta",offset: {x:0,y:0},size: 30}}
+        this.player = new Player(x,y)
+        console.log("use these to create character", newPlayerStats);
     }
 
     selectPlayerStartLocation(){

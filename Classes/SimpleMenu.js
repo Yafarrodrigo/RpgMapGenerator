@@ -1,13 +1,12 @@
 export default class SimpleMenu{
-    constructor(options=[]){
+    constructor(canvas,options=[]){
 
         this.options = options
         this.selectedOption = 0
 
-        const canvas = document.getElementById('mainMenuCanvas')
+        this.canvas = canvas
         this.w = canvas.width
         this.h = canvas.height
-        this.canvas = canvas
         this.ctx = canvas.getContext('2d')
 
         this.boundKeyboardControls = this.keyboardControls.bind(this)

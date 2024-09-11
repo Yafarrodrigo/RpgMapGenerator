@@ -5,7 +5,7 @@ import {default as defaultCONFIGS} from "../CONFIGS.js";
 import LogPanel from "./LogPanel.js";
 
 export default class MapSelector{
-    constructor(seed, moveToGameFunction, customUserParams, skip){
+    constructor(seed, moveToGameFunction, customUserParams, skip, newPlayerStats){
 
         if(skip === true){
             document.getElementById('blackscreen').style.display = "grid"
@@ -33,6 +33,8 @@ export default class MapSelector{
         this.CONFIGS = {...defaultCONFIGS}
 
         this.moveToGameFunction = moveToGameFunction
+        this.newPlayerStats = newPlayerStats
+        
         this.boundControls = this.controls.bind(this)
         document.addEventListener('keydown', this.boundControls)
 
@@ -50,15 +52,10 @@ export default class MapSelector{
             })
 
         this.graphics = new Graphics(this.currentMap, this.CONFIGS)
-
     }
 
     getCurrentMapGenData(){
         return this.currentGenData
-    }
-
-    terminate(){
-        document.removeEventListener('keydown', this.boundControls)
     }
 
     start(){
@@ -189,6 +186,7 @@ export default class MapSelector{
         }else if(e.key === "Enter"){
             e.preventDefault()
             this.terminate()
+            localStorage.clear()
             localStorage.setItem('mapGenData', JSON.stringify(
                 {
                     seed: this.seed,
@@ -197,7 +195,7 @@ export default class MapSelector{
                     mountainQTY: this.userParams.mountainQTY
                 }
             ))
-            this.moveToGameFunction(this.seed,this.currentMap)
+            this.moveToGameFunction(this.seed,this.currentMap, this.newPlayerStats)
             document.getElementById('blackscreen').style.display = "none"
         }
     }
@@ -206,5 +204,9 @@ export default class MapSelector{
         this.terminate()
         this.moveToGameFunction(this.seed, this.currentMap)
         document.getElementById('blackscreen').style.display = "none"
+    }
+
+    terminate(){
+        document.removeEventListener('keydown', this.boundControls)
     }
 }
