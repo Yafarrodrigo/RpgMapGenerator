@@ -3,9 +3,10 @@ import Graphics from "./Graphics.js";
 import mulberry32 from "../Utils/mulberry32.js"
 import LogPanel from "./LogPanel.js";
 import Player from "./Player.js";
+import GameMap from "./GameMap.js"
 
 export default class Game{
-    constructor(seed, map, CONFIGS){
+    constructor(seed, mapData, CONFIGS){
         this.log = new LogPanel()
         this.log.clear()
 
@@ -17,7 +18,8 @@ export default class Game{
         }
         const randomNumberenerator = mulberry32(seed*9999)
         this.random = randomNumberenerator
-        this.map = map
+        this.map = new GameMap(this, this.log, CONFIGS.mapWidth,CONFIGS.mapHeight,this.random, seed, 
+            CONFIGS, mapData.tiles, mapData.settlements, mapData.paths)
 
         this.graphics = new Graphics(this.map, CONFIGS)
         this.controls = new Controls(this)
@@ -26,6 +28,22 @@ export default class Game{
         this.mode = "moving player" // "moving player", "moving camera", "menu"
 
         this.clock = null
+    }
+
+    saveGame(){
+        localStorage.setItem('player', JSON.stringify(this.player))
+        const saveGameWorker = new Worker("./Workers/compressSave.js")
+        const dataToSave = {
+            tiles: this.map.tiles,
+            settlements: this.map.settlements,
+            paths: this.map.paths
+        }        
+        saveGameWorker.postMessage(JSON.stringify(dataToSave))
+        saveGameWorker.onmessage = ({data}) => {
+            localStorage.setItem('gameMap', data)
+            this.log.info("saved game!")
+            saveGameWorker.terminate()
+        };
     }
 
     start(){

@@ -10,7 +10,8 @@ let currentMenu = null
 
 function moveToMainMenu(){
     const mainMenu = new Menu("Main Menu")
-    const savedMapGenData = JSON.parse(localStorage.getItem('mapGenData'))
+    //const savedMapGenData = JSON.parse(localStorage.getItem('mapGenData'))
+    const savedMapGenData = localStorage.getItem('gameMap')
         if(savedMapGenData !== null){
             mainMenu.addOption("Continue", moveToMapSelector)
         }
@@ -64,15 +65,18 @@ function moveToMapSelector(newPlayerStats){
     currentMenu.terminate()
     document.body.innerHTML = gameUI
 
-    const savedMapGenData = JSON.parse(localStorage.getItem('mapGenData'))
-    if(savedMapGenData !== null){
-        mapSelector = new MapSelector(savedMapGenData.seed, moveToGame,{
-            settlementsQTY: savedMapGenData.settlementsQTY,
-            waterQTY: savedMapGenData.waterQTY,
-            mountainQTY: savedMapGenData.mountainQTY
-        }, true, newPlayerStats)
-        mapSelector.start()
+    const savedMap = localStorage.getItem('gameMap')
+    if(savedMap !== null){
 
+        const loadGameWorker = new Worker("./Workers/decompressSave.js")
+            loadGameWorker.postMessage(savedMap)
+            loadGameWorker.onmessage = ({data}) => {
+                const {tiles,settlements,paths} = JSON.parse(data)
+                const mapData = {tiles,settlements,paths}
+                moveToGame(mapData.seed, mapData, newPlayerStats)
+                document.getElementById('blackscreen').style.display = "none"
+                loadGameWorker.terminate()
+            };
     }else{
         mapSelector = new MapSelector(SEED, moveToGame, {
             settlementsQTY: "10",
@@ -85,8 +89,9 @@ function moveToMapSelector(newPlayerStats){
     currentMenu = mapSelector
 }
 
-function moveToGame(seed, currentMap, newPlayerStats){
-    const game = new Game(seed,currentMap,CONFIGS)
+function moveToGame(seed, mapData, newPlayerStats){
+    currentMenu = null
+    const game = new Game(seed,mapData,CONFIGS)
     const savedPlayer = JSON.parse(localStorage.getItem('player'))
     if(savedPlayer !== null){
         game.player = savedPlayer
@@ -95,14 +100,22 @@ function moveToGame(seed, currentMap, newPlayerStats){
         localStorage.setItem('player', JSON.stringify(game.player))
     }
     game.update()
-    console.log(game);
+    game.saveGame()
 }
 
 function storageUsage(){
-    const maxUsage = 5242870
-    const currentUsage = maxUsage - (1024 * 1024 * 5 - escape(encodeURIComponent(JSON.stringify(localStorage))).length)
-    console.log("localStorage: ", (currentUsage/maxUsage).toFixed(4) + "%")
+    console.log("localStorage usage: ", localStorageSize()+"kb")
 }
+
+function localStorageSize() {
+    let _lsTotal = 0,_xLen, _x;
+    for (_x in localStorage) {
+    if (!localStorage.hasOwnProperty(_x)) continue;
+        _xLen = (localStorage[_x].length + _x.length) * 2;
+        _lsTotal += _xLen;
+    }
+  return  (_lsTotal / 1024).toFixed(2);
+ }
 
 moveToMainMenu()
 storageUsage()

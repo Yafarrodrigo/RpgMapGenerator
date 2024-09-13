@@ -2,16 +2,17 @@ import TILES from "../TILES.js";
 import Tile from "./Tile.js";
 
 export default class GameMap{
-    constructor(game,logPanel, width, height, randomGen, seed, CONFIGS){
+    constructor(game,logPanel, width, height, randomGen, seed, CONFIGS, tiles, settlements,paths){
         this.width = width
         this.height = height
         this.tileSize = CONFIGS.mapTileSize
         this.cols = Math.floor(this.width / this.tileSize)
         this.rows = Math.floor(this.height / this.tileSize)
         this.random = randomGen
-        this.tiles = []
-        this.settlements = []
-        this.paths = []
+        this.tiles = tiles
+        this.settlements = settlements
+        this.paths = paths
+        this.seed = seed
         this.seeds = {
             temperature: 0,
             moisture: 0,
@@ -19,56 +20,57 @@ export default class GameMap{
         }
         this.genAvailable = false
         
-        const mapGenWorker = new Worker("./Workers/MapGenWorker.js", {type: "module"})
-        mapGenWorker.postMessage({txt:"start", seed,CONFIGS})
+        if(tiles.length === 0){
+            const mapGenWorker = new Worker("./Workers/MapGenWorker.js", {type: "module"})
+            mapGenWorker.postMessage({txt:"start", seed,CONFIGS})
 
-        let currentProgressTxt = "Generating Terrain... "
-        logPanel.info(currentProgressTxt + "0%")
-        mapGenWorker.onmessage = ({data}) => {
-            if(data.txt === "finished terrain"){
-                this.tiles = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
-                for(let x = 0; x < this.cols; x++){
-                    for(let y = 0; y < this.rows; y++){
-                        const {id,tileId,temp,moist,alt} = data.map[x][y]
-                        const randomTileResource = this.random()
-                        this.tiles[x][y] = new Tile({id,x,y,tileId,temp,moist,alt,randomTileResource})
+            let currentProgressTxt = "Generating Terrain... "
+            logPanel.info(currentProgressTxt + "0%")
+            mapGenWorker.onmessage = ({data}) => {
+                if(data.txt === "finished terrain"){
+                    this.tiles = new Array(this.cols).fill(null).map( () => new Array(this.rows).fill(null))
+                    for(let x = 0; x < this.cols; x++){
+                        for(let y = 0; y < this.rows; y++){
+                            const {id,tileId,temp,moist,alt} = data.map[x][y]
+                            const randomTileResource = this.random()
+                            this.tiles[x][y] = new Tile({id,x,y,tileId,temp,moist,alt,randomTileResource})
+                        }
                     }
+                    this.seeds = data.seeds
+
+                    logPanel.changeLastMsg(currentProgressTxt + "100%")
+                    logPanel.info(currentProgressTxt + "100%")
+                    currentProgressTxt = "Generating Settlements... "
+
+                    mapGenWorker.postMessage({txt:"add settlements"})
                 }
-                this.seeds = data.seeds
+                else if(data.txt === "finished settlements"){
+                    this.settlements = data.settlements.filter( set => set.isConnected)
+                    
+                    // change tiles to roads
+                    this.paths = data.roads
+                    this.paths.forEach( path => path.forEach( ({x,y}) => {
+                        this.tiles[x][y].changeTile("road")
+                    }))
 
-                logPanel.changeLastMsg(currentProgressTxt + "100%")
-                logPanel.info(currentProgressTxt + "100%")
-                currentProgressTxt = "Generating Settlements... "
+                    this.settlements.forEach( ({x,y}) => {
+                        this.placeSettlementOnMap(x,y,this.tiles)
+                    })
 
-                mapGenWorker.postMessage({txt:"add settlements"})
-            }
-            else if(data.txt === "finished settlements"){
-                this.settlements = data.settlements.filter( set => set.isConnected)
-                
-                // change tiles to roads
-                this.paths = data.roads
-                this.paths.forEach( path => path.forEach( ({x,y}) => {
-                    this.tiles[x][y].changeTile("road")
-                }))
-
-                this.settlements.forEach( ({x,y}) => {
-                    this.placeSettlementOnMap(x,y,this.tiles)
-                })
-
-                this.genAvailable = true
-                if(game !== null){
-                    game.setupPlayer()
+                    this.genAvailable = true
+                    if(game !== null){
+                        game.setupPlayer()
+                    }
+                    mapGenWorker.terminate()
+                    logPanel.changeLastMsg(currentProgressTxt + "100%")
+                    logPanel.info("Map ready to play!",true)
                 }
-                mapGenWorker.terminate()
-                logPanel.changeLastMsg(currentProgressTxt + "100%")
-                logPanel.info("Map ready to play!",true)
-            }
-            else if (data.txt === "progress") {
-                logPanel.changeLastMsg(currentProgressTxt + data.progress + "%")
-            }
+                else if (data.txt === "progress") {
+                    logPanel.changeLastMsg(currentProgressTxt + data.progress + "%")
+                }
 
+            }
         }
-
     }
 
     getTileAt(x,y){

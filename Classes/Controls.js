@@ -35,6 +35,12 @@ export default class Controls{
                 case "S":
                     this.DOWN = false
                     break;
+
+                case "g":
+                case "G":
+                    game.saveGame()
+                    game.log.info("saving game...")
+                    break;
             }
         })
         document.addEventListener('keydown', function(e){

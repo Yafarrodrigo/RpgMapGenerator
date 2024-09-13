@@ -49,7 +49,7 @@ export default class MapSelector{
                 settlementsQTY: this.userParams.settlementsQTY,
                 waterQTY: this.userParams.waterQTY,
                 mountainQTY: this.userParams.mountainQTY
-            })
+            }, [], [], [])
 
         this.graphics = new Graphics(this.currentMap, this.CONFIGS)
     }
@@ -98,7 +98,7 @@ export default class MapSelector{
                     settlementsQTY: this.userParams.settlementsQTY,
                     waterQTY: this.userParams.waterQTY,
                     mountainQTY: this.userParams.mountainQTY
-                })
+                },[],[],[])
         }
 
         else if(e.key === "1"){
@@ -186,7 +186,17 @@ export default class MapSelector{
         }else if(e.key === "Enter"){
             e.preventDefault()
             this.terminate()
+
+            document.getElementById('blackscreen').style.display = "grid"
+            
+            const saveGameWorker = new Worker("./Workers/compressSave.js")
+            const dataToSave = {
+                tiles: this.currentMap.tiles,
+                settlements: this.currentMap.settlements,
+                paths: this.currentMap.paths
+            }
             localStorage.clear()
+
             localStorage.setItem('mapGenData', JSON.stringify(
                 {
                     seed: this.seed,
@@ -195,15 +205,20 @@ export default class MapSelector{
                     mountainQTY: this.userParams.mountainQTY
                 }
             ))
-            this.moveToGameFunction(this.seed,this.currentMap, this.newPlayerStats)
-            document.getElementById('blackscreen').style.display = "none"
+
+            saveGameWorker.postMessage(JSON.stringify(dataToSave))
+            saveGameWorker.onmessage = ({data}) => {
+                localStorage.setItem('gameMap', data)
+                this.moveToGameFunction(this.seed,this.currentMap, this.newPlayerStats)
+                document.getElementById('blackscreen').style.display = "none"
+                saveGameWorker.terminate()
+            };
         }
     }
 
     skipSelectionAndPlay(){
         this.terminate()
         this.moveToGameFunction(this.seed, this.currentMap)
-        document.getElementById('blackscreen').style.display = "none"
     }
 
     terminate(){
