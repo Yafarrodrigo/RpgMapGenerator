@@ -3,59 +3,59 @@ import Menu from "./Classes/Menu.js";
 import MapSelector from "./Classes/MapSelector.js";
 import gameUI from "./GameUI.js"
 import CONFIGS from "./CONFIGS.js";
-import CharacterCreation from "./Classes/CharacterCreation.js";
 import EditableStatsScreen from "./Classes/EditableStatsScreen.js"
+import CharacterCreation from "./Classes/CharacterCreation.js"
 
 let currentMenu = null
 
 function moveToMainMenu(){
+    document.body.innerHTML = ""
     const mainMenu = new Menu("Main Menu")
-    //const savedMapGenData = JSON.parse(localStorage.getItem('mapGenData'))
     const savedMapGenData = localStorage.getItem('gameMap')
         if(savedMapGenData !== null){
             mainMenu.addOption("Continue", moveToMapSelector)
         }
-    mainMenu.addOption("New game", moveToEditChar)
-    mainMenu.addOption("Reset", ()=> {localStorage.clear(); location.reload()})
+    mainMenu.addOption("New game", moveToCharacterCreation)
+    mainMenu.addOption("Reset", moveToCheckForReset)
 
     currentMenu = mainMenu
 }
 
-function moveToEditChar(){
+export function moveToEditChar(attributes, skills){
     currentMenu.terminate()
     const editScreen = new EditableStatsScreen("Edit Stats", moveToMapSelector)
-    editScreen.addOption("Strenght", 1, 99, 3)
-    editScreen.addOption("Agility", 1, 99, 3)
-    editScreen.addOption("Intelligence", 1, 99, 3)
-    editScreen.addOption("Constitution", 1, 99, 3)
+    editScreen.addOption("Strenght", 1, 99, attributes.str)
+    editScreen.addOption("Agility", 1, 99, attributes.agi)
+    editScreen.addOption("Intelligence", 1, 99, attributes.int)
+    editScreen.addOption("Constitution", 1, 99, attributes.con)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("One Handed Weapons", 1, 99, 3)
-    editScreen.addOption("Ranged Weapons", 1, 99, 3)
-    editScreen.addOption("Two Handed Weapons", 1, 99, 3)
+    editScreen.addOption("One Handed Weapons", 1, 99, skills.oneHandedWeapons)
+    editScreen.addOption("Ranged Weapons", 1, 99, skills.rangedWeapons)
+    editScreen.addOption("Two Handed Weapons", 1, 99, skills.twoHandedWeapons)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("Shields", 1, 99, 3)
-    editScreen.addOption("Quivers", 1, 99, 3)
-    editScreen.addOption("Books", 1, 99, 3)
-    editScreen.addOption("Orbs", 1, 99, 3)
+    editScreen.addOption("Shields", 1, 99, skills.shields)
+    editScreen.addOption("Quivers", 1, 99, skills.quivers)
+    editScreen.addOption("Books", 1, 99, skills.books)
+    editScreen.addOption("Orbs", 1, 99, skills.orbs)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("Arcane mastery", 1, 99, 3)
-    editScreen.addOption("Fire mastery", 1, 99, 3)
-    editScreen.addOption("Water mastery", 1, 99, 3)
-    editScreen.addOption("Air mastery", 1, 99, 3)
-    editScreen.addOption("Earth mastery", 1, 99, 3)
+    editScreen.addOption("Arcane mastery", 1, 99, skills.arcaneMastery)
+    editScreen.addOption("Fire mastery", 1, 99, skills.fireMastery)
+    editScreen.addOption("Water mastery", 1, 99, skills.waterMastery)
+    editScreen.addOption("Air mastery", 1, 99, skills.airMastery)
+    editScreen.addOption("Earth mastery", 1, 99, skills.earthMastery)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("Herbalism", 1, 99, 3)
-    editScreen.addOption("Alchemy", 1, 99, 3)
+    editScreen.addOption("Herbalism", 1, 99, skills.herbalism)
+    editScreen.addOption("Alchemy", 1, 99, skills.alchemy)
     editScreen.addOption("spacer", 0, 0, 0)
     editScreen.addOption("Finish", 0, 0, 0)
     currentMenu = editScreen.subMenu
 }
 
-/* function moveToCharacterCreation(){
+function moveToCharacterCreation(){
     currentMenu.terminate()
     const charCreation = new CharacterCreation(moveToMapSelector)
     currentMenu = charCreation.currentMenu
-} */
+}
 
 function moveToMapSelector(newPlayerStats){
 
@@ -89,6 +89,15 @@ function moveToMapSelector(newPlayerStats){
     currentMenu = mapSelector
 }
 
+function moveToCheckForReset(){
+    currentMenu.terminate()
+    const checkMenu = new Menu("Are you sure?")
+    checkMenu.addOption("No", () => location.reload())
+    checkMenu.addOption("Yes", () => {localStorage.clear(); location.reload()})
+
+    currentMenu = checkMenu
+}
+
 function moveToGame(seed, mapData, newPlayerStats){
     currentMenu = null
     const game = new Game(seed,mapData,CONFIGS)
@@ -98,9 +107,9 @@ function moveToGame(seed, mapData, newPlayerStats){
     }else{
         game.setupPlayer(newPlayerStats)
         localStorage.setItem('player', JSON.stringify(game.player))
+        game.saveGame()
     }
     game.update()
-    game.saveGame()
 }
 
 function storageUsage(){

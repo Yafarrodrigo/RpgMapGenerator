@@ -1,8 +1,8 @@
 export default class EditableMenu{
     constructor(canvas,options=[], offsetY, moveToMapSelector){
 
-        this.availablePoints = 10
-        this.maxPoints = 10
+        this.availablePoints = 5
+        this.maxPoints = 5
 
         this.options = options
         this.selectedOption = 0
@@ -49,7 +49,7 @@ export default class EditableMenu{
             if(this.options[this.selectedOption].current - 1 > 0){
                 this.options[this.selectedOption].current -= 1
                 this.availablePoints += 1
-                this.options[this.selectedOption].mod = this.options[this.selectedOption].current - 3
+                this.options[this.selectedOption].mod = this.options[this.selectedOption].current - this.options[this.selectedOption].initial
                 this.drawMenu()
             }
         }
@@ -58,7 +58,7 @@ export default class EditableMenu{
             if(this.options[this.selectedOption].current +1 <= this.options[this.selectedOption].max){
                 this.options[this.selectedOption].current += 1
                 this.availablePoints -= 1
-                this.options[this.selectedOption].mod = this.options[this.selectedOption].current - 3
+                this.options[this.selectedOption].mod = this.options[this.selectedOption].current - this.options[this.selectedOption].initial
                 this.drawMenu()
             }
         }
@@ -68,12 +68,17 @@ export default class EditableMenu{
                 this.moveToMapSelector(this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer"))
             }
         }   
+        else if(e.key === "Escape"){
+            e.preventDefault()
+            this.terminate()
+            location.reload()
+        }   
     }
     
     showAvailablePoints(){
         const anchorX = this.w/2 + 60
         const anchorY = this.h/8 -10
-        this.drawText(`(  points available: ${this.availablePoints} / ${this.maxPoints}  )`, 15, anchorX, anchorY, false, "yellow")
+        this.drawText(`(  points available: ${this.availablePoints} / ${this.maxPoints}  )`, 15, anchorX -25, anchorY, false, "yellow")
     }
 
     drawMenu(){
@@ -83,13 +88,13 @@ export default class EditableMenu{
         let offsetX = 150
         let offsetY = 0
         this.ctx.fillStyle = "black"
-        this.ctx.fillRect(anchorX-250,anchorY-125,500,900)
+        this.ctx.fillRect(anchorX-230,anchorY-125,500,950)
         this.options.forEach( (opt,index) => {
             if(opt.txt === "spacer"){
                 offsetY += 35
             }
             else if(opt.txt === "Finish"){
-                const txtOffset = Math.floor(this.ctx.measureText(opt.txt).width/2)
+                const txtOffset = Math.floor(this.ctx.measureText(opt.txt).width/2) + 25
                 if(this.selectedOption === index){
                     this.drawText(opt.txt,txtSize,anchorX+txtOffset,anchorY+offsetY, true)
                 }else{

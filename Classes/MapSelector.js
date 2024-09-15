@@ -214,6 +214,11 @@ export default class MapSelector{
                 saveGameWorker.terminate()
             };
         }
+        else if(e.key === "Escape"){
+            e.preventDefault()
+            this.terminate()
+            location.reload()
+        } 
     }
 
     skipSelectionAndPlay(){

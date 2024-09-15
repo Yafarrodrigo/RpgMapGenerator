@@ -15,13 +15,13 @@ export default class EditableStatsScreen{
 
         this.ctx.fillStyle = "black"
         this.ctx.fillRect(0,0,this.w,this.h)
-        this.drawText(title, 25, this.w/2, this.h/8 -50, true)
+        this.drawText(title, 25, this.w/2-25, this.h/8 -50, true)
 
         this.subMenu = new EditableMenu(this.canvas, [], -325, moveToMapSelector)
     }
 
     addOption(txt, min, max, current){
-        this.subMenu.options.push({txt, min, max, current, mod: 0})
+        this.subMenu.options.push({txt, min, max, initial: current, current, mod: 0})
         this.subMenu.drawMenu()
     }
 

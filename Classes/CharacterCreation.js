@@ -1,4 +1,5 @@
 import Menu from "./Menu.js"
+import { moveToEditChar } from "../index.js"
 
 export default class CharacterCreation{
     constructor(moveToMapSelector){
@@ -87,9 +88,13 @@ export default class CharacterCreation{
             this.applySelectionsToStats()
             // EDIT STATS SCREEN
             const name = prompt("Whats your character's name?")
-            this.newPlayerSelections.name = name
+            if(name !== ""){
+                this.newPlayerSelections.name = name
+            }else{
+                this.newPlayerSelections.name = "unknown"
+            }
             this.currentMenu.terminate()
-            this.moveToMapSelector(this.newPlayerSelections)
+            moveToEditChar(this.playerAttributes, this.playerSkills)
         }
     }
 
