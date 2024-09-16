@@ -199,8 +199,8 @@ export default class CharacterCreation{
         }
 
         for(let atr in this.playerAttributes){
-            if(this.playerAttributes[atr] < 0){
-                this.playerAttributes[atr] = 0
+            if(this.playerAttributes[atr] < 1){
+                this.playerAttributes[atr] = 1
             }
         }
     }

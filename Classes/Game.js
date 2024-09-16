@@ -25,7 +25,7 @@ export default class Game{
         this.controls = new Controls(this)
 
         this.player = null
-        this.mode = "moving player" // "moving player", "moving camera", "menu"
+        this.mode = "moving player" // "moving player", "open map"
 
         this.clock = null
     }

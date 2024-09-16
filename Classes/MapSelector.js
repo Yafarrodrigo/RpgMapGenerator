@@ -75,7 +75,7 @@ export default class MapSelector{
 
     update(){
         if(this.currentMap.tiles.length > 0){
-            this.graphics.update("displaying map", null, this.currentMap)
+            this.graphics.update("open map", null, this.currentMap)
             if(this.currentMap.genAvailable === true){
                 this.flags.generatingMap = false
                 this.stop()
@@ -204,10 +204,11 @@ export default class MapSelector{
                     waterQTY: this.userParams.waterQTY,
                     mountainQTY: this.userParams.mountainQTY
                 }
-            ))
+            )) 
 
             saveGameWorker.postMessage(JSON.stringify(dataToSave))
             saveGameWorker.onmessage = ({data}) => {
+                console.log(data);
                 localStorage.setItem('gameMap', data)
                 this.moveToGameFunction(this.seed,this.currentMap, this.newPlayerStats)
                 document.getElementById('blackscreen').style.display = "none"

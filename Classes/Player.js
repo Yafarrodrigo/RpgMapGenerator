@@ -38,6 +38,6 @@ export default class Player{
             alchemy: new Skill("Alchemy","alchemy",1,99,1),
         }
 
-        this.character = {value:"@", color: "magenta",offset: {x:0,y:0},size: 30}
+        this.character = {value:"@", inMap: "◯", color: "magenta",offset: {x:-5,y:0},size: 30}
     }
 }

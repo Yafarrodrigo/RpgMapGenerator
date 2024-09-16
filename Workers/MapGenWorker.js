@@ -18,25 +18,18 @@ onmessage = function({data}) {
         CONFIGS = data.CONFIGS
         random = mulberry32(data.seed*9999)
         const noise = new Noise()
-        //console.time("terrain")
         const {terrainMap: map, possibleSettlementSpawns, seeds} = generateMap(random,noise,CONFIGS)
-        //console.timeEnd("terrain")
         mapValues.terrainMap = map
         mapValues.possibleSettlementSpawns = possibleSettlementSpawns
         postMessage({txt:"finished terrain", map, seeds})
     }
     else if(data.txt === "add settlements"){
         
-        //console.time("settlements")
         const {settlements, MAP} = placeRandomSettlements(CONFIGS)
-        //console.timeEnd("settlements")
         mapValues.terrainMap = MAP
         mapValues.settlements = settlements
 
-        //console.time("roads")
         const {paths,connectedSettlements} = connectSettlements(mapValues.settlements)
-
-        //console.timeEnd("roads")
 
         postMessage({txt:"finished settlements", settlements:connectedSettlements, roads:paths})
     }
@@ -98,20 +91,29 @@ function generateMap(random, noise, CONFIGS){
             if(progress % 5 === 0) postMessage({txt:"progress", progress})
 
             let id = y + (x*cols)
+            const altThresholds = {
+                deepwater: 0.3,
+                water: 0.35,
+                beach: 0.4,
+                plains: 0.7,
+                highMountain: 0.9,
+                midMountain: 0.8,
+                snowyMontain: 0.925
+            }
             // my abajo -> agua
-            if(Utils.between(alt, 0, 0.3)){
+            if(Utils.between(alt, 0, altThresholds.deepwater)){
                 terrainMap[x][y] = ({id,x,y,tileId:"deepWater", temp,moist,alt,randomTileResource})
             }
-            else if(Utils.between(alt, 0.3, 0.35)){
+            else if(Utils.between(alt, altThresholds.deepwater, altThresholds.water)){
                 terrainMap[x][y] = new Tile({id,x,y,tileId:"water", temp,moist,alt,randomTileResource})
             }
             // entre el agua y lo demas -> playa
-            else if(Utils.between(alt, 0.35, 0.4)){
+            else if(Utils.between(alt, altThresholds.water, altThresholds.beach)){
                 terrainMap[x][y] = new Tile({id,x,y,tileId:"beach", temp,moist,alt,randomTileResource})
                 possibleSettlementSpawns.push({x,y})
             }
             // lo demas, pero no muuuy alto -> diferentes biomas
-            else if(Utils.between(alt, 0.4, 0.7)){
+            else if(Utils.between(alt, altThresholds.beach, altThresholds.plains)){
                 // plains
                 if(moist <= 0.8 && Utils.between(temp,0.1,0.5) || moist <= 0.7 && Utils.between(temp,0.5,0.7)){
                     terrainMap[x][y] = new Tile({id,x,y,tileId:"plains", temp,moist,alt,randomTileResource})
@@ -144,10 +146,10 @@ function generateMap(random, noise, CONFIGS){
             }
             // arriba de todo montañas y nieve
             else{
-                if(alt > 0.925 && temp < 0.2) terrainMap[x][y] = new Tile({id,x,y,tileId:"snow", temp,moist,alt,randomTileResource})
-                else if(alt > 0.9) terrainMap[x][y] = new Tile({id,x,y,tileId:"highMountain", temp,moist,alt,randomTileResource})
-                else if(alt > 0.8) terrainMap[x][y] = new Tile({id,x,y,tileId:"midMountain", temp,moist,alt,randomTileResource})
-                else if(alt > 0.7){
+                if(alt > altThresholds.snowyMontain && temp < 0.2) terrainMap[x][y] = new Tile({id,x,y,tileId:"snow", temp,moist,alt,randomTileResource})
+                else if(alt > altThresholds.highMountain) terrainMap[x][y] = new Tile({id,x,y,tileId:"highMountain", temp,moist,alt,randomTileResource})
+                else if(alt > altThresholds.midMountain) terrainMap[x][y] = new Tile({id,x,y,tileId:"midMountain", temp,moist,alt,randomTileResource})
+                else if(alt > altThresholds.plains){
                     terrainMap[x][y] = new Tile({id,x,y,tileId:"lowMountain", temp,moist,alt,randomTileResource})
                     possibleSettlementSpawns.push({x,y})
                 }

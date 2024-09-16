@@ -26,6 +26,13 @@ export default class Tile{
         this.isRoad = false
         this.character = {...TILES[tileId].character[Math.floor(randomTileResource * TILES[tileId].character.length)]}
         this.color = TILES[tileId].color
+        this.bg = {
+            show: false,
+            color: TILES[tileId].bgColor
+        }
+        if(TILES[tileId].bgColor !== ""){
+            this.bg.show = true
+        }
 
         this.resource = this.getRandomResource(tileId,randomTileResource)
         if(this.resource !== null){
@@ -56,6 +63,14 @@ export default class Tile{
             this.biome = newTile.biome
             this.resource = this.getRandomResource(tileId)
             this.character = newTile.character[Math.floor(Math.random()*newTile.character.length)]
+        }
+
+        this.bg = {
+            show: false,
+            color: TILES[tileId].bgColor
+        }
+        if(TILES[tileId].bgColor !== ""){
+            this.bg.show = true
         }
     }
 

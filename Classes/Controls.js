@@ -44,14 +44,14 @@ export default class Controls{
             }
         })
         document.addEventListener('keydown', function(e){
-            if((e.key !== "m" && e.key !== "M") && game.mode === "moving camera") return
+            if((e.key !== "m" && e.key !== "M") && game.mode === "open map") return
             switch(e.key){
                 case "m":
                 case "M":
-                    if(game.mode === "moving camera"){
+                    if(game.mode === "open map"){
                         game.mode = "moving player"
                     }else{
-                        game.mode = "moving camera"
+                        game.mode = "open map"
                     }
                     game.update()
                     break;

@@ -47,7 +47,6 @@ export default class GameMap{
                 else if(data.txt === "finished settlements"){
                     this.settlements = data.settlements.filter( set => set.isConnected)
                     
-                    // change tiles to roads
                     this.paths = data.roads
                     this.paths.forEach( path => path.forEach( ({x,y}) => {
                         this.tiles[x][y].changeTile("road")
