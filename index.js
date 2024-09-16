@@ -53,11 +53,11 @@ export function moveToEditChar(attributes, skills){
 
 function moveToCharacterCreation(){
     currentMenu.terminate()
-    const charCreation = new CharacterCreation(moveToMapSelector)
+    const charCreation = new CharacterCreation()
     currentMenu = charCreation.currentMenu
 }
 
-function moveToMapSelector(newPlayerStats){
+function moveToMapSelector(newPlayerStats, newGame){
 
     let mapSelector
     const SEED = 1
@@ -66,7 +66,7 @@ function moveToMapSelector(newPlayerStats){
     document.body.innerHTML = gameUI
 
     const savedMap = localStorage.getItem('gameMap')
-    if(savedMap !== null){
+    if(savedMap !== null && newGame !== true){
 
         const loadGameWorker = new Worker("./Workers/decompressSave.js")
             loadGameWorker.postMessage(savedMap)

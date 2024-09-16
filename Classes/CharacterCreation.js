@@ -2,7 +2,7 @@ import Menu from "./Menu.js"
 import { moveToEditChar } from "../index.js"
 
 export default class CharacterCreation{
-    constructor(moveToMapSelector){
+    constructor(){
 
         this.playerAttributes = {
             str: 1,
@@ -36,7 +36,6 @@ export default class CharacterCreation{
             alchemy: 1
         }
 
-        this.moveToMapSelector = moveToMapSelector
         this.newPlayerSelections = {
             age: "middle age",
             body: "average",

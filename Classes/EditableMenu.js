@@ -65,7 +65,7 @@ export default class EditableMenu{
         else if(e.key === "Enter"){
             e.preventDefault()
             if(this.options[this.selectedOption].txt === "Finish" && this.availablePoints === 0){
-                this.moveToMapSelector(this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer"))
+                this.moveToMapSelector(this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer"), true)
             }
         }   
         else if(e.key === "Escape"){
