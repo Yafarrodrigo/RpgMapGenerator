@@ -60,8 +60,11 @@ export default class Game{
 
     setupPlayer(newPlayerStats){
         const {x,y} = this.selectPlayerStartLocation()
-        this.player = new Player(x,y)
-        console.log("use these to create character", newPlayerStats);
+        const newStats = {}
+        newPlayerStats.forEach( stat => {
+            newStats[stat.key] = stat.current
+        })
+        this.player = new Player(x,y, newStats, newPlayerStats.name)
     }
 
     selectPlayerStartLocation(){

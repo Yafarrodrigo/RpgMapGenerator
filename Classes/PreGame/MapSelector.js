@@ -1,11 +1,12 @@
-import GameMap from "./GameMap.js"
-import mulberry32 from "../Utils/mulberry32.js"
-import Graphics from "./Graphics.js";
-import {default as defaultCONFIGS} from "../CONFIGS.js";
-import LogPanel from "./LogPanel.js";
+import GameMap from "../GameMap.js"
+import mulberry32 from "../../Utils/mulberry32.js"
+import Graphics from "../Graphics.js";
+import {default as defaultCONFIGS} from "../../CONFIGS.js";
+import LogPanel from "../LogPanel.js";
+import { moveToGame } from "../../index.js"
 
 export default class MapSelector{
-    constructor(seed, moveToGameFunction, customUserParams, skip, newPlayerStats){
+    constructor(seed, customUserParams, skip, newPlayerStats){
 
         if(skip === true){
             document.getElementById('blackscreen').style.display = "grid"
@@ -32,7 +33,6 @@ export default class MapSelector{
 
         this.CONFIGS = {...defaultCONFIGS}
 
-        this.moveToGameFunction = moveToGameFunction
         this.newPlayerStats = newPlayerStats
         
         this.boundControls = this.controls.bind(this)
@@ -208,9 +208,8 @@ export default class MapSelector{
 
             saveGameWorker.postMessage(JSON.stringify(dataToSave))
             saveGameWorker.onmessage = ({data}) => {
-                console.log(data);
                 localStorage.setItem('gameMap', data)
-                this.moveToGameFunction(this.seed,this.currentMap, this.newPlayerStats)
+                moveToGame(this.seed,this.currentMap, this.newPlayerStats)
                 document.getElementById('blackscreen').style.display = "none"
                 saveGameWorker.terminate()
             };

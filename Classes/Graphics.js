@@ -71,16 +71,16 @@ export default class Graphics{
         const {tileScale, charactersOffset, viewTileSize} = viewport
         this.ctx.font = `${tile.character.size * tileScale}pt Monospace`
         if(tile.resource === null){
-            this.ctx.fillStyle = tile.color
             if(tile.isRoad){
+                this.ctx.fillStyle = tile.bgColor
                 this.ctx.fillRect(x*viewTileSize,y*viewTileSize,viewTileSize,viewTileSize)
-            }else{
-                this.ctx.fillText(
-                    tile.character.value,
-                    x*viewTileSize + tile.character.offset.x + charactersOffset.x,
-                    y*viewTileSize + tile.character.offset.y + charactersOffset.y
-                )
             }
+            this.ctx.fillStyle = tile.color
+            this.ctx.fillText(
+                tile.character.value,
+                x*viewTileSize + tile.character.offset.x + charactersOffset.x,
+                y*viewTileSize + tile.character.offset.y + charactersOffset.y
+            )
         }
         else{
             this.ctx.font = `${15 * tileScale}pt Monospace`

@@ -53,6 +53,7 @@ export default class Tile{
             this.isSettlement = false
             this.isRoad = true
             this.canPlayerSpawn = true
+            this.character = {...TILES[tileId].character[0]} // roads only have 1 char
         }else if(newTile.biome === "settlement"){
             this.resource = null
             this.character = null

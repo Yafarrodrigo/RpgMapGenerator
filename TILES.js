@@ -119,7 +119,7 @@ const TILES = {
         color: "#82673e",
         bgColor: "#422711",
         character: [
-            {value:"Δ",offset: {x:0,y:0},size: 25}
+            {value:"Δ",offset: {x:-5,y:5},size: 25}
         ]
     },
     highMountain: {
@@ -131,7 +131,7 @@ const TILES = {
         color: "#66442b",
         bgColor: "#211811",
         character: [
-            {value:"⩕",offset: {x:0,y:0},size: 20}
+            {value:"⩕",offset: {x:-5,y:0},size: 20}
         ]
     },
     deepWater: {
@@ -200,9 +200,9 @@ const TILES = {
         canHaveRoad: true,
         canSpawnSettlement: false,
         resources: [],
-        color: "darkorange",
-        bgColor: "",
-        character: [{value:"r",offset: {x:0,y:0},size: 20}]
+        color: "#111",
+        bgColor: "darkorange",
+        character: [{value:"░░░",offset: {x:-7,y:3},size: 15}]
     },
     settlement: {
         biome: "settlement",
@@ -221,6 +221,6 @@ const TILES = {
     }
 }
 
-// cursor ⯐    ⦻   ☤   ☠  ☣
+// cursor ⯐    ⦻  ☤  ☠  ☣  ⚔  ⚝   
 
 export default TILES

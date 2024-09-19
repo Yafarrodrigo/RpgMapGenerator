@@ -1,10 +1,11 @@
 import Game from "./Classes/Game.js";
-import Menu from "./Classes/Menu.js";
-import MapSelector from "./Classes/MapSelector.js";
+import Menu from "./Classes/PreGame/Menu.js";
+import MapSelector from "./Classes/PreGame/MapSelector.js";
 import gameUI from "./GameUI.js"
 import CONFIGS from "./CONFIGS.js";
-import EditableStatsScreen from "./Classes/EditableStatsScreen.js"
-import CharacterCreation from "./Classes/CharacterCreation.js"
+import EditableStatsScreen from "./Classes/PreGame/EditableStatsScreen.js"
+import CharacterCreation from "./Classes/PreGame/CharacterCreation.js"
+import NameSelector from "./Classes/PreGame/NameSelector.js";
 
 let currentMenu = null
 
@@ -21,34 +22,34 @@ function moveToMainMenu(){
     currentMenu = mainMenu
 }
 
-export function moveToEditChar(attributes, skills){
+export function moveToEditChar(stats){
     currentMenu.terminate()
-    const editScreen = new EditableStatsScreen("Edit Stats", moveToMapSelector)
-    editScreen.addOption("Strenght", 1, 99, attributes.str)
-    editScreen.addOption("Agility", 1, 99, attributes.agi)
-    editScreen.addOption("Intelligence", 1, 99, attributes.int)
-    editScreen.addOption("Constitution", 1, 99, attributes.con)
+    const editScreen = new EditableStatsScreen("Edit Stats", moveToNameSelector)
+    editScreen.addOption("Strenght", "str", 1, 99, stats.str)
+    editScreen.addOption("Agility", "agi", 1, 99, stats.agi)
+    editScreen.addOption("Intelligence", "int", 1, 99, stats.int)
+    editScreen.addOption("Constitution", "con", 1, 99, stats.con)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("One Handed Weapons", 1, 99, skills.oneHandedWeapons)
-    editScreen.addOption("Ranged Weapons", 1, 99, skills.rangedWeapons)
-    editScreen.addOption("Two Handed Weapons", 1, 99, skills.twoHandedWeapons)
+    editScreen.addOption("One Handed Weapons", "oneHandedWeapons", 1, 99, stats.oneHandedWeapons)
+    editScreen.addOption("Ranged Weapons", "rangedWeapons", 1, 99, stats.rangedWeapons)
+    editScreen.addOption("Two Handed Weapons", "twoHandedWeapons", 1, 99, stats.twoHandedWeapons)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("Shields", 1, 99, skills.shields)
-    editScreen.addOption("Quivers", 1, 99, skills.quivers)
-    editScreen.addOption("Books", 1, 99, skills.books)
-    editScreen.addOption("Orbs", 1, 99, skills.orbs)
+    editScreen.addOption("Shields", "shields", 1, 99, stats.shields)
+    editScreen.addOption("Quivers", "quivers", 1, 99, stats.quivers)
+    editScreen.addOption("Books", "books", 1, 99, stats.books)
+    editScreen.addOption("Orbs", "orbs", 1, 99, stats.orbs)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("Arcane mastery", 1, 99, skills.arcaneMastery)
-    editScreen.addOption("Fire mastery", 1, 99, skills.fireMastery)
-    editScreen.addOption("Water mastery", 1, 99, skills.waterMastery)
-    editScreen.addOption("Air mastery", 1, 99, skills.airMastery)
-    editScreen.addOption("Earth mastery", 1, 99, skills.earthMastery)
+    editScreen.addOption("Arcane mastery", "arcaneMastery", 1, 99, stats.arcaneMastery)
+    editScreen.addOption("Fire mastery", "fireMastery", 1, 99, stats.fireMastery)
+    editScreen.addOption("Water mastery", "waterMastery", 1, 99, stats.waterMastery)
+    editScreen.addOption("Air mastery", "airMastery", 1, 99, stats.airMastery)
+    editScreen.addOption("Earth mastery", "earthMastery", 1, 99, stats.earthMastery)
     editScreen.addOption("spacer", 0, 0, 0)
-    editScreen.addOption("Herbalism", 1, 99, skills.herbalism)
-    editScreen.addOption("Alchemy", 1, 99, skills.alchemy)
+    editScreen.addOption("Herbalism", "herbalism", 1, 99, stats.herbalism)
+    editScreen.addOption("Alchemy", "alchemy", 1, 99, stats.alchemy)
     editScreen.addOption("spacer", 0, 0, 0)
     editScreen.addOption("Finish", 0, 0, 0)
-    currentMenu = editScreen.subMenu
+    currentMenu = editScreen
 }
 
 function moveToCharacterCreation(){
@@ -57,7 +58,13 @@ function moveToCharacterCreation(){
     currentMenu = charCreation.currentMenu
 }
 
-function moveToMapSelector(newPlayerStats, newGame){
+export function moveToNameSelector(stats){
+    currentMenu.terminate()
+    const nameSelector = new NameSelector("Whats your character's name?", stats)
+    currentMenu = nameSelector
+}
+
+export function moveToMapSelector(newPlayerStats, newGame){
 
     let mapSelector
     const SEED = 1
@@ -78,7 +85,7 @@ function moveToMapSelector(newPlayerStats, newGame){
                 loadGameWorker.terminate()
             };
     }else{
-        mapSelector = new MapSelector(SEED, moveToGame, {
+        mapSelector = new MapSelector(SEED, {
             settlementsQTY: "10",
             waterQTY: "standard",
             mountainQTY: "standard"
@@ -98,7 +105,7 @@ function moveToCheckForReset(){
     currentMenu = checkMenu
 }
 
-function moveToGame(seed, mapData, newPlayerStats){
+export function moveToGame(seed, mapData, newPlayerStats){
     currentMenu = null
     const game = new Game(seed,mapData,CONFIGS)
     const savedPlayer = JSON.parse(localStorage.getItem('player'))
@@ -110,6 +117,7 @@ function moveToGame(seed, mapData, newPlayerStats){
         game.saveGame()
     }
     game.update()
+    console.log(game);
 }
 
 function storageUsage(){

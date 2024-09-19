@@ -1,7 +1,7 @@
 import EditableMenu from "./EditableMenu.js"
 
 export default class EditableStatsScreen{
-    constructor(title, moveToMapSelector){
+    constructor(title, moveToMapSelector, moveToNameSelector){
         const canvas = document.createElement('canvas')
         canvas.classList.add("menuCanvas")
         canvas.width = 1920
@@ -17,11 +17,11 @@ export default class EditableStatsScreen{
         this.ctx.fillRect(0,0,this.w,this.h)
         this.drawText(title, 25, this.w/2-25, this.h/8 -50, true)
 
-        this.subMenu = new EditableMenu(this.canvas, [], -325, moveToMapSelector)
+        this.subMenu = new EditableMenu(this.canvas, [], -325, moveToMapSelector, moveToNameSelector)
     }
 
-    addOption(txt, min, max, current){
-        this.subMenu.options.push({txt, min, max, initial: current, current, mod: 0})
+    addOption(txt, key, min, max, current){
+        this.subMenu.options.push({txt,key, min, max, initial: current, current, mod: 0})
         this.subMenu.drawMenu()
     }
 

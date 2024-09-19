@@ -1,5 +1,7 @@
+import { moveToNameSelector } from "../../index.js"
+
 export default class EditableMenu{
-    constructor(canvas,options=[], offsetY, moveToMapSelector){
+    constructor(canvas,options=[], offsetY){
 
         this.availablePoints = 5
         this.maxPoints = 5
@@ -12,8 +14,6 @@ export default class EditableMenu{
         this.h = canvas.height
         this.ctx = canvas.getContext('2d')
         this.offsetY = offsetY
-
-        this.moveToMapSelector = moveToMapSelector
 
         this.boundKeyboardControls = this.keyboardControls.bind(this)
         document.addEventListener('keydown', this.boundKeyboardControls)   
@@ -65,7 +65,9 @@ export default class EditableMenu{
         else if(e.key === "Enter"){
             e.preventDefault()
             if(this.options[this.selectedOption].txt === "Finish" && this.availablePoints === 0){
-                this.moveToMapSelector(this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer"), true)
+                const stats = this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer")
+                moveToNameSelector(stats)
+                //moveToMapSelector(this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer"), true)
             }
         }   
         else if(e.key === "Escape"){
