@@ -31,8 +31,11 @@ export default class EditableMenu{
                 else {
                     this.selectedOption += 1
                 }
-                this.drawMenu()
             }
+            else{
+                this.selectedOption = 0
+            }
+            this.drawMenu()
         }else if(e.key === "ArrowUp"){
             e.preventDefault()
             if(this.selectedOption - 1 >= 0){
@@ -42,8 +45,11 @@ export default class EditableMenu{
                 else {
                     this.selectedOption -= 1
                 }
-                this.drawMenu()
             }
+            else{
+                this.selectedOption = this.options.length-1
+            }
+            this.drawMenu()
         }
         else if(e.key === "ArrowLeft"){
             if(this.options[this.selectedOption].current - 1 > 0){
@@ -67,7 +73,6 @@ export default class EditableMenu{
             if(this.options[this.selectedOption].txt === "Finish" && this.availablePoints === 0){
                 const stats = this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer")
                 moveToNameSelector(stats)
-                //moveToMapSelector(this.options.filter( opt => opt.txt !== "Finish" && opt.txt !== "spacer"), true)
             }
         }   
         else if(e.key === "Escape"){

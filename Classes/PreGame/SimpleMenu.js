@@ -20,14 +20,19 @@ export default class SimpleMenu{
             e.preventDefault()
             if(this.selectedOption + 1 < this.options.length){
                 this.selectedOption += 1
-                this.drawMenu()
             }
+            else{
+                this.selectedOption = 0
+            }
+            this.drawMenu()
         }else if(e.key === "ArrowUp"){
             e.preventDefault()
             if(this.selectedOption - 1 >= 0){
                 this.selectedOption -= 1
-                this.drawMenu()
+            }else{
+                this.selectedOption = this.options.length-1
             }
+            this.drawMenu()
         }else if(e.key === "Enter"){
             e.preventDefault()
             if(this.options[this.selectedOption].func){

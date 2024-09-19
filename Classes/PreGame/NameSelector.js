@@ -8,6 +8,8 @@ export default class NameSelector{
         canvas.height = 1080
         document.body.append(canvas)
 
+        this.maxChars = 20
+
         this.w = canvas.width
         this.h = canvas.height
         this.canvas = canvas
@@ -19,6 +21,7 @@ export default class NameSelector{
 
         this.stats = stats
         this.name = []
+        this.drawText("_", 25, this.w/2, this.h/2, false)
 
         this.boundKeyboardControls = this.keyboardControls.bind(this)
         document.addEventListener('keypress', this.boundKeyboardControls)  
@@ -38,17 +41,16 @@ export default class NameSelector{
 
     keyboardControls(e){
         const allowed = "abcdedfghijklmñnopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
-        if(allowed.includes(e.key)){
+        if(allowed.includes(e.key) && this.name.length < this.maxChars){
             this.name.push(e.key)
-
-            const txtWidth = this.ctx.measureText(this.name.join("")).width
-            const txtOffset = Math.floor(txtWidth/2)
 
             const anchorX = this.w/2
             const anchorY = this.h/2
             this.ctx.fillStyle = "black"
-            this.ctx.fillRect(anchorX-txtOffset,anchorY-25,txtWidth,50)
-            this.drawText(this.name.join(""), 25,  anchorX, anchorY, false)
+            this.ctx.fillRect(anchorX-500,anchorY-25,1000,50)
+
+            const txtToDraw = this.name.length < this.maxChars-1 ? this.name.join("")+"_" : this.name.join("")
+            this.drawText(txtToDraw, 25,  anchorX, anchorY, false)
         }
 
         else if (e.key === "Enter"){
@@ -65,19 +67,16 @@ export default class NameSelector{
     keyboardExtraControls(e){
         if(e.key === "Backspace"){
 
-            const txtWidth = this.ctx.measureText(this.name.join("")).width
-            const txtOffset = Math.floor(txtWidth/2)
-
             const anchorX = this.w/2
             const anchorY = this.h/2
             this.ctx.fillStyle = "black"
-            this.ctx.fillRect(anchorX-txtOffset,anchorY-25,txtWidth,50)
+            this.ctx.fillRect(anchorX-500,anchorY-25,1000,50)
             
             if(this.name.length - 1 >= 0){
                 this.name.length = this.name.length-1
             }
             
-            this.drawText(this.name.join(""), 25,  anchorX, anchorY, false)
+            this.drawText(this.name.join("")+"_", 25,  anchorX, anchorY, false)
         }
     }
 
