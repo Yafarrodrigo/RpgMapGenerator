@@ -62,7 +62,7 @@ export default class GameMap{
                     }
                     mapGenWorker.terminate()
                     logPanel.changeLastMsg(currentProgressTxt + "100%")
-                    logPanel.info("Map ready to play!",true)
+                    logPanel.info("Map ready",true)
                 }
                 else if (data.txt === "progress") {
                     logPanel.changeLastMsg(currentProgressTxt + data.progress + "%")

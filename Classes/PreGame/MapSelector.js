@@ -184,6 +184,7 @@ export default class MapSelector{
                 mountainQTY: "standard"
             }
         }else if(e.key === "Enter"){
+            return // moving into game disabled
             e.preventDefault()
             this.terminate()
 

@@ -69,10 +69,10 @@ export function moveToMapSelector(newPlayerStats, newGame){
     let mapSelector
     const SEED = 1
 
-    currentMenu.terminate()
+    //currentMenu.terminate()
     document.body.innerHTML = gameUI
 
-    const savedMap = localStorage.getItem('gameMap')
+/*     const savedMap = localStorage.getItem('gameMap')
     if(savedMap !== null && newGame !== true){
 
         const loadGameWorker = new Worker("./Workers/decompressSave.js")
@@ -84,14 +84,14 @@ export function moveToMapSelector(newPlayerStats, newGame){
                 document.getElementById('blackscreen').style.display = "none"
                 loadGameWorker.terminate()
             };
-    }else{
+    }else{ */
         mapSelector = new MapSelector(SEED, {
             settlementsQTY: "10",
             waterQTY: "standard",
             mountainQTY: "standard"
         } ,false, newPlayerStats)
         mapSelector.start()
-    }
+/*     } */
 
     currentMenu = mapSelector
 }
@@ -134,5 +134,7 @@ function localStorageSize() {
   return  (_lsTotal / 1024).toFixed(2);
  }
 
-moveToMainMenu()
-storageUsage()
+//moveToMainMenu()
+//storageUsage()
+
+moveToMapSelector({},true)

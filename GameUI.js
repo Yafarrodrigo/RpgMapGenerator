@@ -11,9 +11,7 @@ const GameUI = `
         </div>
         <div id="sidebarContainer">
             <div id="sidebar">
-                <br>
-                <div>Enter - Play this map! </div>
-                <br>
+
                 <div>spacebar - generate new map</div>
                 <br>
                 <div>R - reset parameters</div>

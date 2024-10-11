@@ -11,10 +11,7 @@ export default class Controls{
 
     createListeners(game){
         document.addEventListener('keydown', (e) => {
-            if(this.lastKey === e.key){
-                console.log("nope!");
-            }else{
-                console.log(e.key);
+            if(this.lastKey !== e.key){
                 this.lastKey = e.key
             }
 
